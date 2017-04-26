@@ -1,0 +1,16 @@
+#Tue Apr 18 12:02:17 WEST 2017
+renamed.4=classes3.dex
+renamed.3=classes4.dex
+renamed.2=classes5.dex
+renamed.1=classes2.dex
+base.4=/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/transforms/dex/debug/folders/1000/2/androidplot-core-0.6.1_4bc93cee73432fc2b8bb05a0f79fe17faa38c519
+renamed.0=classes.dex
+base.3=/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/transforms/dex/debug/folders/1000/2/libStreamSDK_9a62dfdd7149cb7591e6ab15924cc403513b7beb
+base.2=/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/transforms/dex/debug/folders/1000/2/NskAlgoSdk_153354a67ecd0f4715d9cb3b4095cf3a1d41afb8
+base.1=/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/transforms/dex/debug/folders/1000/10/support-v4-19.1.0_602fbbe566558b37d48e0846e0026bc4a8ce62c0
+base.0=/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_78ad10b199e827eadc057821d7f186d5228ab3b5
+file.4=/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/transforms/dex/debug/folders/1000/2/androidplot-core-0.6.1_4bc93cee73432fc2b8bb05a0f79fe17faa38c519/classes.dex
+file.3=/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/transforms/dex/debug/folders/1000/2/libStreamSDK_9a62dfdd7149cb7591e6ab15924cc403513b7beb/classes.dex
+file.2=/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/transforms/dex/debug/folders/1000/2/NskAlgoSdk_153354a67ecd0f4715d9cb3b4095cf3a1d41afb8/classes.dex
+file.1=/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/transforms/dex/debug/folders/1000/10/support-v4-19.1.0_602fbbe566558b37d48e0846e0026bc4a8ce62c0/classes.dex
+file.0=/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_78ad10b199e827eadc057821d7f186d5228ab3b5/classes.dex
