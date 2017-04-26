@@ -117,7 +117,7 @@ public class MainActivity extends Activity {
     long millis;
     int seconds;
     int minutes;
-    int set = 1;
+    boolean breakStatus = false;
     boolean dialogOpenned = false;
 
     Handler timerHandler = new Handler();
@@ -136,35 +136,78 @@ public class MainActivity extends Activity {
             timerTextView.setText(String.format("%02d:%02d", minutes, seconds));
             timerHandler.postDelayed(this, 500);
 
-            if (seconds == 3) {
-                AlertDialog.Builder builder;
-                builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("Break Time");
-                builder.setMessage("Click ok to start a 5 minute break");
-                builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                        dialogOpenned = false;
-                    }
-                });
-                builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        timerHandler.removeCallbacks(timerRunnable);
-                        timerTextView.setText("00:00");
-                        startTime = System.currentTimeMillis();
-                        timerHandler.postDelayed(timerRunnable, 0);
-                    }
-                });
-                AlertDialog alertDialog = builder.create();
-                if (dialogOpenned == false) {
-                    alertDialog.show();
-                    dialogOpenned = true;
+            if (breakStatus == false) {
+                if (seconds == 5) {
+                    workRoutine();
+                }
+            } else {
+                if (seconds == 3) {
+                    breakRoutine();
                 }
             }
+
         }
     };
 
+    public void breakRoutine() {
+        breakStatus = false;
+        AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Work Time");
+        builder.setMessage("Click ok to work again");
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                dialogOpenned = false;
+            }
+        });
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                timerHandler.removeCallbacks(timerRunnable);
+                timerTextView.setText("00:00");
+                startTime = System.currentTimeMillis();
+                timerHandler.postDelayed(timerRunnable, 0);
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        if (dialogOpenned == false) {
+            alertDialog.show();
+            dialogOpenned = true;
+        }
+
+    }
+
+    public void workRoutine() {
+        breakStatus = true;
+        AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Break Time");
+        builder.setMessage("Click ok to start a 5 minute break");
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                dialogOpenned = false;
+            }
+        });
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                timerHandler.removeCallbacks(timerRunnable);
+                timerTextView.setText("00:00");
+                startTime = System.currentTimeMillis();
+                timerHandler.postDelayed(timerRunnable, 0);
+                Toast toast = Toast.makeText(getApplicationContext(), "Break Time just started!", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        if (dialogOpenned == false) {
+            alertDialog.show();
+            dialogOpenned = true;
+        }
+
+    }
 
 
     @Override

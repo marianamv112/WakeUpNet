@@ -1,4 +1,4 @@
-#Wed Apr 26 18:19:34 WEST 2017
+#Wed Apr 26 18:52:08 WEST 2017
 base.0=/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/transforms/dex/debug/folders/1000/1f/main
 renamed.0=classes.dex
 file.0=/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/transforms/dex/debug/folders/1000/1f/main/classes.dex
