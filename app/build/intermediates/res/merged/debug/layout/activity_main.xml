@@ -199,18 +199,6 @@
         android:layout_centerHorizontal="true"
         />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start Timer"
-        android:id="@+id/timerButton"
-        android:enabled="true"
-        android:textSize="12dp"
-        android:maxHeight="20dp"
-        android:minHeight="20dp"
-        android:layout_below="@+id/timerTextView"
-        android:layout_alignParentLeft="true" />
-
 
     <!--<CheckBox
         android:layout_width="wrap_content"
@@ -527,10 +515,10 @@
         android:layout_below="@+id/attTitle"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:visibility="gone"
+
         />
 
-    <!--
+    <!-- android:visibility="gone"
     android:layout_alignLeft="@+id/me2Title"
     android:layout_above="@+id/setIntervalButton" -->
 

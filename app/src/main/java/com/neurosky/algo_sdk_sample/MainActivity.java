@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -106,7 +108,7 @@ public class MainActivity extends Activity {
 
     private NskAlgoSdk nskAlgoSdk;
 
-    private int bLastOutputInterval = 1;
+    //private int bLastOutputInterval = 1;
 
     ArrayList<String> bpGraphValues = new ArrayList<String>();
     String gnuPlotInput = "";
@@ -126,8 +128,7 @@ public class MainActivity extends Activity {
         @Override
         public void run() {
 
-
-            //timerTextView = (TextView) findViewById(R.id.timerTextView);
+            timerTextView = (TextView) findViewById(R.id.timerTextView);
             millis = System.currentTimeMillis() - startTime;
             seconds = (int) (millis / 1000);
             minutes = seconds / 60;
@@ -257,27 +258,6 @@ public class MainActivity extends Activity {
 
         stateText = (TextView)this.findViewById(R.id.stateText);
         sqText = (TextView)this.findViewById(R.id.sqText);
-
-        timerTextView = (TextView) findViewById(R.id.timerTextView);
-
-        Button b = (Button) findViewById(R.id.timerButton);
-        b.setText("start");
-        b.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Button b = (Button) v;
-                if (b.getText().equals("stop")) {
-                    timerHandler.removeCallbacks(timerRunnable);
-                    b.setText("start");
-                } else {
-                    startTime = System.currentTimeMillis();
-                    timerHandler.postDelayed(timerRunnable, 0);
-                    b.setText("stop");
-                }
-            }
-        });
-
 
         headsetButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -581,7 +561,7 @@ public class MainActivity extends Activity {
                             startButton.setText("Start");
                             startButton.setEnabled(true);
                             stopButton.setEnabled(false);
-
+                            timerHandler.removeCallbacks(timerRunnable);
                             headsetButton.setEnabled(true);
                             //cannedButton.setEnabled(true);
 
@@ -964,8 +944,6 @@ public class MainActivity extends Activity {
 
                         OutputStream out = null;
 
-                        Log.d(TAG, "2nd base");
-
                         File outputFile = new File(path, "gnuPlotInput.dat");
 
                             if (outputFile.exists())
@@ -973,12 +951,13 @@ public class MainActivity extends Activity {
 
 
                         out = new FileOutputStream(outputFile);
-                        Log.d(TAG, "6th base");
 
                         PrintWriter pw = new PrintWriter(out);
                         pw.println(gnuPlotInput);
                         pw.flush();
                         pw.close();
+
+                        sendEmail(outputFile);
 
                     } catch (FileNotFoundException e) {
                         Log.d(TAG, "File not found Exception");
@@ -1066,5 +1045,20 @@ public class MainActivity extends Activity {
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
+    }
+
+    protected void sendEmail(File filelocation) {
+
+        Uri path = Uri.fromFile(filelocation);
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        // set the type to 'email'
+        emailIntent .setType("vnd.android.cursor.dir/email");
+        String to[] = {"marianamv112@gmail.com"};
+        emailIntent .putExtra(Intent.EXTRA_EMAIL, to);
+        // the attachment
+        emailIntent .putExtra(Intent.EXTRA_STREAM, path);
+        // the mail subject
+        emailIntent .putExtra(Intent.EXTRA_SUBJECT, "WakeUpNet Results");
+        startActivity(Intent.createChooser(emailIntent , "Send email..."));
     }
 }
