@@ -3,6 +3,7 @@ package com.neurosky.algo_sdk_sample;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -12,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -173,6 +175,9 @@ public class MainActivity extends Activity {
         });
         AlertDialog alertDialog = builder.create();
         if (dialogOpenned == false) {
+            Vibrator vibrator;
+            vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            vibrator.vibrate(500);
             alertDialog.show();
             dialogOpenned = true;
         }
@@ -204,7 +209,11 @@ public class MainActivity extends Activity {
         });
         AlertDialog alertDialog = builder.create();
         if (dialogOpenned == false) {
+
             alertDialog.show();
+            Vibrator vibrator;
+            vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            vibrator.vibrate(500);
             dialogOpenned = true;
         }
 

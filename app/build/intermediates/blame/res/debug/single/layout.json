@@ -4,12 +4,12 @@
         "source": "/Users/mariana/.android/build-cache/963454b57f7025c1c3fd0078c2a15d59e8117e2a/output/res/layout/abc_activity_chooser_view_include.xml"
     },
     {
-        "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/layout/activity_main.xml",
-        "source": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/res/layout/activity_main.xml"
-    },
-    {
         "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/layout/abc_action_mode_bar.xml",
         "source": "/Users/mariana/.android/build-cache/963454b57f7025c1c3fd0078c2a15d59e8117e2a/output/res/layout/abc_action_mode_bar.xml"
+    },
+    {
+        "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/layout/activity_main.xml",
+        "source": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/res/layout/activity_main.xml"
     },
     {
         "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/layout/abc_search_view.xml",
@@ -52,12 +52,12 @@
         "source": "/Users/mariana/.android/build-cache/963454b57f7025c1c3fd0078c2a15d59e8117e2a/output/res/layout/abc_action_menu_layout.xml"
     },
     {
-        "merged": "/Users/mariana/Desktop/Android Developer Tools 4.2 - backup 31Mar /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/layout/abc_popup_menu_item_layout.xml",
-        "source": "/Users/mariana/.android/build-cache/963454b57f7025c1c3fd0078c2a15d59e8117e2a/output/res/layout/abc_popup_menu_item_layout.xml"
-    },
-    {
         "merged": "/Users/mariana/Desktop/Android Developer Tools 4.2 - backup 31Mar /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/layout/abc_action_mode_bar.xml",
         "source": "/Users/mariana/.android/build-cache/963454b57f7025c1c3fd0078c2a15d59e8117e2a/output/res/layout/abc_action_mode_bar.xml"
+    },
+    {
+        "merged": "/Users/mariana/Desktop/Android Developer Tools 4.2 - backup 31Mar /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/layout/abc_popup_menu_item_layout.xml",
+        "source": "/Users/mariana/.android/build-cache/963454b57f7025c1c3fd0078c2a15d59e8117e2a/output/res/layout/abc_popup_menu_item_layout.xml"
     },
     {
         "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/layout/abc_action_menu_layout.xml",

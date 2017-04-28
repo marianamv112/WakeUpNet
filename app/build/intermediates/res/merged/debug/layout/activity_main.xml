@@ -515,10 +515,10 @@
         android:layout_below="@+id/attTitle"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-
+        android:visibility="gone"
         />
 
-    <!-- android:visibility="gone"
+    <!--
     android:layout_alignLeft="@+id/me2Title"
     android:layout_above="@+id/setIntervalButton" -->
 
