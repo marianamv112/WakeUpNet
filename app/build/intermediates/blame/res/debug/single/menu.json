@@ -1,9 +1,5 @@
 [
     {
-        "merged": "/Users/mariana/Desktop/Android Developer Tools 4.2 - backup 31Mar /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/menu/menu_main.xml",
-        "source": "/Users/mariana/Desktop/Android Developer Tools 4.2 - backup 31Mar /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/res/menu/menu_main.xml"
-    },
-    {
         "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/menu/menu_main.xml",
         "source": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/res/menu/menu_main.xml"
     }

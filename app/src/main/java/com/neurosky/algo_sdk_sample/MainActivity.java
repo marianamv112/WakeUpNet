@@ -36,17 +36,15 @@ import com.neurosky.connection.DataType.MindDataType;
 import com.neurosky.connection.TgStreamHandler;
 import com.neurosky.connection.TgStreamReader;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Calendar;
+
+import static android.R.id.message;
 
 public class MainActivity extends Activity {
 
@@ -124,6 +122,8 @@ public class MainActivity extends Activity {
     boolean breakStatus = false;
     boolean dialogOpenned = false;
 
+    boolean runningSession = false;
+
     Handler timerHandler = new Handler();
     Runnable timerRunnable = new Runnable() {
 
@@ -140,11 +140,11 @@ public class MainActivity extends Activity {
             timerHandler.postDelayed(this, 500);
 
             if (breakStatus == false) {
-                if (seconds == 5) {
+                if (minutes == 25) {
                     workRoutine();
                 }
             } else {
-                if (seconds == 3) {
+                if (minutes == 5) {
                     breakRoutine();
                 }
             }
@@ -177,7 +177,7 @@ public class MainActivity extends Activity {
         if (dialogOpenned == false) {
             Vibrator vibrator;
             vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            vibrator.vibrate(500);
+            vibrator.vibrate(1000);
             alertDialog.show();
             dialogOpenned = true;
         }
@@ -213,7 +213,7 @@ public class MainActivity extends Activity {
             alertDialog.show();
             Vibrator vibrator;
             vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            vibrator.vibrate(500);
+            vibrator.vibrate(1000);
             dialogOpenned = true;
         }
 
@@ -224,6 +224,9 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Intent intent = getIntent();
+        String message = intent.getStringExtra(LoginActivity.EXTRA_MESSAGE);
 
         nskAlgoSdk = new NskAlgoSdk();
 
@@ -295,6 +298,77 @@ public class MainActivity extends Activity {
                 // (4) Demo of  using connect() and start() to replace connectAndStart(),
                 // please call start() when the state is changed to STATE_CONNECTED
                 tgStreamReader.connect();
+
+                int algoTypes = 0;// = NskAlgoType.NSK_ALGO_TYPE_CR.value;
+
+                startButton.setEnabled(false);
+                stopButton.setEnabled(false);
+                clearAllSeries();
+                text.setVisibility(View.INVISIBLE);
+                text.setText("");
+
+                bpText.setEnabled(false);
+
+                currentSelectedAlgo = NskAlgoType.NSK_ALGO_TYPE_INVALID;
+                /*intervalSeekBar.setEnabled(false);
+                setIntervalButton.setEnabled(false);
+                intervalText.setText("--");*/
+
+                attValue.setText("--");
+                medValue.setText("--");
+
+                stateText.setText("");
+                sqText.setText("");
+
+                if (medCheckBox.isChecked()) {
+                    algoTypes += NskAlgoType.NSK_ALGO_TYPE_MED.value;
+                }
+                if (attCheckBox.isChecked()) {
+                    algoTypes += NskAlgoType.NSK_ALGO_TYPE_ATT.value;
+                }
+                //if (blinkCheckBox.isChecked()) {
+                //  algoTypes += NskAlgoType.NSK_ALGO_TYPE_BLINK.value;
+                //}
+                if (bpCheckBox.isChecked()) {
+                    algoTypes += NskAlgoType.NSK_ALGO_TYPE_BP.value;
+                    bpText.setEnabled(true);
+                    bp_deltaSeries = createSeries("Delta");
+                    bp_thetaSeries = createSeries("Theta");
+                    bp_alphaSeries = createSeries("Alpha");
+                    bp_betaSeries = createSeries("Beta");
+                    bp_gammaSeries = createSeries("Gamma");
+                }
+
+
+                if (algoTypes == 0) {
+                    showDialog("Please select at least one algorithm");
+                } else {
+                    if (bInited) {
+                        nskAlgoSdk.NskAlgoUninit();
+                        bInited = false;
+                    }
+                    int ret = nskAlgoSdk.NskAlgoInit(algoTypes, getFilesDir().getAbsolutePath());
+                    if (ret == 0) {
+                        bInited = true;
+                    }
+
+                    Log.d(TAG, "NSK_ALGO_Init() " + ret);
+                    String sdkVersion = "SDK ver.: " + nskAlgoSdk.NskAlgoSdkVersion();
+
+                    if ((algoTypes & NskAlgoType.NSK_ALGO_TYPE_ATT.value) != 0) {
+                        sdkVersion += "\nATT ver.: " + nskAlgoSdk.NskAlgoAlgoVersion(NskAlgoType.NSK_ALGO_TYPE_ATT.value);
+                    }
+                    if ((algoTypes & NskAlgoType.NSK_ALGO_TYPE_MED.value) != 0) {
+                        sdkVersion += "\nMED ver.: " + nskAlgoSdk.NskAlgoAlgoVersion(NskAlgoType.NSK_ALGO_TYPE_MED.value);
+                    }
+                    if ((algoTypes & NskAlgoType.NSK_ALGO_TYPE_BLINK.value) != 0) {
+                        sdkVersion += "\nBlink ver.: " + nskAlgoSdk.NskAlgoAlgoVersion(NskAlgoType.NSK_ALGO_TYPE_BLINK.value);
+                    }
+                    if ((algoTypes & NskAlgoType.NSK_ALGO_TYPE_BP.value) != 0) {
+                        sdkVersion += "\nEEG Bandpower ver.: " + nskAlgoSdk.NskAlgoAlgoVersion(NskAlgoType.NSK_ALGO_TYPE_BP.value);
+                    }
+                    showToast(sdkVersion, Toast.LENGTH_LONG);
+                }
             }
         });
 
@@ -367,10 +441,12 @@ public class MainActivity extends Activity {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (bRunning == false) {
                     nskAlgoSdk.NskAlgoStart(false);
                 } else {
                     nskAlgoSdk.NskAlgoPause();
+                    //runningSession = true;
                 }
             }
         });
@@ -382,7 +458,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        setAlgosButton.setOnClickListener(new View.OnClickListener() {
+        /*setAlgosButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // check selected algos
@@ -399,7 +475,7 @@ public class MainActivity extends Activity {
                 currentSelectedAlgo = NskAlgoType.NSK_ALGO_TYPE_INVALID;
                 /*intervalSeekBar.setEnabled(false);
                 setIntervalButton.setEnabled(false);
-                intervalText.setText("--");*/
+                intervalText.setText("--");
 
                 attValue.setText("--");
                 medValue.setText("--");
@@ -457,7 +533,7 @@ public class MainActivity extends Activity {
                     showToast(sdkVersion, Toast.LENGTH_LONG);
                 }
             }
-        });
+        });*/
 
         bpText.setEnabled(false);
         bpText.setOnClickListener(new View.OnClickListener() {
@@ -525,6 +601,7 @@ public class MainActivity extends Activity {
                     public void run() {
                         // change UI elements here
                         String sqStr = NskAlgoSignalQuality.values()[fLevel].toString();
+                        Log.d(TAG, "setOnSignalQualityListener: level: " + sqStr + "" + NskAlgoSignalQuality.values().toString());
                         sqText.setText(sqStr);
                     }
                 });
@@ -557,8 +634,8 @@ public class MainActivity extends Activity {
 
                         if (finalState == NskAlgoState.NSK_ALGO_STATE_RUNNING.value || finalState == NskAlgoState.NSK_ALGO_STATE_COLLECTING_BASELINE_DATA.value) {
                             bRunning = true;
-                            startButton.setText("Pause");
-                            startButton.setEnabled(true);
+                            //startButton.setText("Pause");
+                            //startButton.setEnabled(true);
                             stopButton.setEnabled(true);
                             startTime = System.currentTimeMillis();
                             timerHandler.postDelayed(timerRunnable, 0);
@@ -567,12 +644,12 @@ public class MainActivity extends Activity {
                             bRunning = false;
                             raw_data = null;
                             raw_data_index = 0;
-                            startButton.setText("Start");
+                            //startButton.setText("Start");
                             startButton.setEnabled(true);
                             stopButton.setEnabled(false);
                             timerHandler.removeCallbacks(timerRunnable);
                             headsetButton.setEnabled(true);
-                            //cannedButton.setEnabled(true);
+
 
                             if (tgStreamReader != null && tgStreamReader.isBTConnected()) {
 
@@ -588,7 +665,7 @@ public class MainActivity extends Activity {
                         } else if (finalState == NskAlgoState.NSK_ALGO_STATE_PAUSE.value) {
                             bRunning = false;
                             startButton.setText("Start");
-                            startButton.setEnabled(true);
+                            //startButton.setEnabled(true);
                             stopButton.setEnabled(true);
                         } else if (finalState == NskAlgoState.NSK_ALGO_STATE_ANALYSING_BULK_DATA.value) {
                             bRunning = true;
@@ -598,7 +675,7 @@ public class MainActivity extends Activity {
                         } else if (finalState == NskAlgoState.NSK_ALGO_STATE_INITED.value || finalState == NskAlgoState.NSK_ALGO_STATE_UNINTIED.value) {
                             bRunning = false;
                             startButton.setText("Start");
-                            startButton.setEnabled(true);
+                            //startButton.setEnabled(true);
                             stopButton.setEnabled(false);
                         }
                     }
@@ -615,6 +692,16 @@ public class MainActivity extends Activity {
                         // change UI elements here
                         String sqStr = NskAlgoSignalQuality.values()[level].toString();
                         sqText.setText(sqStr);
+
+                        if (level == 0 && runningSession == false) {
+                            startButton.setEnabled(true);
+                            runningSession = true;
+                        }
+                        else {
+                            showToast("Unsatisfying Signal Quality, please adjust the device or change batteries", Toast.LENGTH_SHORT);
+                            startButton.setEnabled(false);
+                        }
+
                     }
                 });
             }
@@ -637,7 +724,6 @@ public class MainActivity extends Activity {
                 bpGraphValues.add(sAlpha);
                 bpGraphValues.add(sBeta);
                 bpGraphValues.add(sGamma);
-                bpGraphValues.add("end");
 
 
                 final float fDelta = delta, fTheta = theta, fAlpha = alpha, fBeta = beta, fGamma = gamma;
@@ -660,11 +746,17 @@ public class MainActivity extends Activity {
             public void onAttAlgoIndex(int value) {
                 Log.d(TAG, "NskAlgoAttAlgoIndexListener: Attention:" + value);
                 String attStr = "[" + value + "]";
+
+                //bpGraphValues.add("beginATT");
+                String attValueStr = Float.toString(value);
+                bpGraphValues.add(attValueStr);
+
                 final String finalAttStr = attStr;
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         // change UI elements here
+
                         attValue.setText(finalAttStr);
                     }
                 });
@@ -676,6 +768,10 @@ public class MainActivity extends Activity {
             public void onMedAlgoIndex(int value) {
                 Log.d(TAG, "NskAlgoMedAlgoIndexListener: Meditation:" + value);
                 String medStr = "[" + value + "]";
+                String medValueStr = Float.toString(value);
+                //bpGraphValues.add("beginMED");
+                bpGraphValues.add(medValueStr);
+                bpGraphValues.add("end");
                 final String finalMedStr = medStr;
                 runOnUiThread(new Runnable() {
                     @Override
@@ -834,7 +930,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    private short [] readData(InputStream is, int size) {
+    /*private short [] readData(InputStream is, int size) {
         short data[] = new short[size];
         int lineCount = 0;
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -853,7 +949,7 @@ public class MainActivity extends Activity {
 
         }
         return data;
-    }
+    }*/
 
     @Override
     public void onBackPressed() {
@@ -867,7 +963,7 @@ public class MainActivity extends Activity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
-    public static String Datetime()
+    /*public static String Datetime()
     {
         Calendar c = Calendar.getInstance();
 
@@ -878,7 +974,7 @@ public class MainActivity extends Activity {
                 + ":" + String.format("%02d", c.get(Calendar.MINUTE))
                 + ":" + String.format("%02d", c.get(Calendar.SECOND)) + "]";
         return sDate;
-    }
+    }*/
 
     private TgStreamHandler callback = new TgStreamHandler() {
 
@@ -906,6 +1002,10 @@ public class MainActivity extends Activity {
                     MainActivity.this.runOnUiThread(new Runnable() {
                         public void run() {
                             Button startButton = (Button) findViewById(R.id.startButton);
+                            //Log.d(TAG, "NAUM FASSU IDEIA QUE BASE SERIA ");
+                            //while (!sqText.getText().equals("GOOD")) {
+                            //    showToast("Signal Quality Poor, please adjust the device", Toast.LENGTH_SHORT);
+                            //}
                             startButton.setEnabled(true);
                         }
 
@@ -931,6 +1031,7 @@ public class MainActivity extends Activity {
                     // We have to call tgStreamReader.stop() and tgStreamReader.close() much more than
                     // tgStreamReader.connectAndstart(), because we have to prepare for that.
 
+                    runningSession = false;
 
                     for (String s : bpGraphValues) {
                         if (s=="begin")
@@ -1037,7 +1138,9 @@ public class MainActivity extends Activity {
     public void showToast(final String msg, final int timeStyle) {
         MainActivity.this.runOnUiThread(new Runnable() {
             public void run() {
-                Toast.makeText(getApplicationContext(), msg, timeStyle).show();
+                //Toast.makeText(getApplicationContext(), msg, timeStyle).show();
+                Toast.makeText(getApplicationContext(), "Connecting... Please wait", Toast.LENGTH_SHORT).show();
+
             }
 
         });
@@ -1067,7 +1170,7 @@ public class MainActivity extends Activity {
         // the attachment
         emailIntent .putExtra(Intent.EXTRA_STREAM, path);
         // the mail subject
-        emailIntent .putExtra(Intent.EXTRA_SUBJECT, "WakeUpNet Results");
+        emailIntent .putExtra(Intent.EXTRA_SUBJECT, message);
         startActivity(Intent.createChooser(emailIntent , "Send email..."));
     }
 }

@@ -12,21 +12,21 @@
     </item>
     <item
         is-multidex="false"
-        jar="/Users/mariana/.android/build-cache/963454b57f7025c1c3fd0078c2a15d59e8117e2a/output/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="25.0.0"
-        sha1="3499ceba05ca1f6037c6a2fad73df8f636224a28">
-        <dex dex="/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/pre-dexed/debug/classes_78ad10b199e827eadc057821d7f186d5228ab3b5.jar" />
-    </item>
-    <item
-        is-multidex="false"
         jar="/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/libs/libStreamSDK.jar"
         jumboMode="false"
         optimize="true"
         revision="25.0.0"
         sha1="466ab0e857b95e19ec5d2cb723c9a676e25c2787">
         <dex dex="/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/pre-dexed/debug/libStreamSDK_9a62dfdd7149cb7591e6ab15924cc403513b7beb.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/mariana/.android/build-cache/963454b57f7025c1c3fd0078c2a15d59e8117e2a/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="3499ceba05ca1f6037c6a2fad73df8f636224a28">
+        <dex dex="/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/pre-dexed/debug/classes_78ad10b199e827eadc057821d7f186d5228ab3b5.jar" />
     </item>
     <item
         is-multidex="false"

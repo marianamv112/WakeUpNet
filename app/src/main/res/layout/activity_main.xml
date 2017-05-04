@@ -54,7 +54,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Headset"
+        android:text="Connect Headset"
         android:id="@+id/headsetButton"
         android:layout_below="@+id/stateTitle"
         android:layout_alignParentLeft="true"
@@ -216,10 +216,11 @@
         android:layout_height="wrap_content"
         android:text="ATT"
         android:id="@+id/attCheckBox"
-        android:checked="false"
+        android:checked="true"
         android:textSize="10dp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentRight="true"
+        android:visibility="gone"/>
 
     <!--<CheckBox
         android:layout_width="wrap_content"
@@ -237,11 +238,12 @@
         android:layout_height="wrap_content"
         android:text="MED"
         android:id="@+id/medCheckBox"
-        android:checked="false"
+        android:checked="true"
         android:textSize="10dp"
         android:layout_below="@+id/attCheckBox"
         android:layout_alignParentRight="false"
-        android:layout_alignRight="@+id/attCheckBox" />
+        android:layout_alignRight="@+id/attCheckBox"
+        android:visibility="gone"/>
 
     <!--<CheckBox
         android:layout_width="wrap_content"
@@ -263,7 +265,8 @@
         android:maxHeight="20dp"
         android:minHeight="20dp"
         android:layout_below="@+id/bpCheckBox"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentRight="true"
+        android:visibility="gone"/>
 
     <!--<Button
         style="?android:attr/buttonStyleSmall"
@@ -490,12 +493,12 @@
         android:layout_height="wrap_content"
         android:text="BP"
         android:id="@+id/bpCheckBox"
-        android:checked="false"
+        android:checked="true"
         android:textSize="10dp"
         android:layout_below="@+id/medCheckBox"
         android:layout_alignParentRight="false"
         android:layout_alignLeft="@+id/medCheckBox"
-
+        android:visibility="gone"
         />
 
     <!-- bpCheckBox position backup:
