@@ -274,6 +274,9 @@ public class MainActivity extends Activity {
         headsetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Toast.makeText(getApplicationContext(), "Connecting... Please wait", Toast.LENGTH_LONG).show();
+
                 output_data_count = 0;
                 output_data = null;
 
@@ -441,12 +444,12 @@ public class MainActivity extends Activity {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                runningSession = true;
                 if (bRunning == false) {
                     nskAlgoSdk.NskAlgoStart(false);
                 } else {
                     nskAlgoSdk.NskAlgoPause();
-                    //runningSession = true;
+                    //
                 }
             }
         });
@@ -693,9 +696,11 @@ public class MainActivity extends Activity {
                         String sqStr = NskAlgoSignalQuality.values()[level].toString();
                         sqText.setText(sqStr);
 
+                        Log.d(TAG, "" + runningSession);
+
                         if (level == 0 && runningSession == false) {
                             startButton.setEnabled(true);
-                            runningSession = true;
+                            //runningSession = true;
                         }
                         else {
                             showToast("Unsatisfying Signal Quality, please adjust the device or change batteries", Toast.LENGTH_SHORT);
@@ -1006,7 +1011,7 @@ public class MainActivity extends Activity {
                             //while (!sqText.getText().equals("GOOD")) {
                             //    showToast("Signal Quality Poor, please adjust the device", Toast.LENGTH_SHORT);
                             //}
-                            startButton.setEnabled(true);
+                            //startButton.setEnabled(true);
                         }
 
                     });
@@ -1139,7 +1144,7 @@ public class MainActivity extends Activity {
         MainActivity.this.runOnUiThread(new Runnable() {
             public void run() {
                 //Toast.makeText(getApplicationContext(), msg, timeStyle).show();
-                Toast.makeText(getApplicationContext(), "Connecting... Please wait", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Connecting... Please wait", Toast.LENGTH_LONG).show();
 
             }
 

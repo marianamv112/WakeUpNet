@@ -6,6 +6,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,12 +17,13 @@ import android.widget.EditText;
  */
 public class LoginActivity extends ActionBarActivity implements LoaderCallbacks<Cursor> {
 
+    final String TAG = "LoginActivityTag";
 
     /**
      * A dummy authentication store containing known user names and passwords.
      * TODO: remove after connecting to a real authentication system.
      */
-    public static final String EXTRA_MESSAGE = "Hello Satan?";
+    public static final String EXTRA_MESSAGE = "teste";
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -41,6 +43,8 @@ public class LoginActivity extends ActionBarActivity implements LoaderCallbacks<
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 EditText editText = (EditText) findViewById(R.id.id);
                 String message = editText.getText().toString();
+                Log.d(TAG, message);
+                Log.d(TAG, editText.getText().toString());
                 intent.putExtra(EXTRA_MESSAGE, message);
                 startActivity(intent);
 
