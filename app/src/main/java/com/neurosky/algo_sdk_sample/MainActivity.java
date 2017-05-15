@@ -44,11 +44,10 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-import static android.R.id.message;
-
 public class MainActivity extends Activity {
 
     final String TAG = "MainActivityTag";
+    //public static final String EXTRA_MESSAGE = "teste";
     /*static {
         System.loadLibrary("NskAlgoAndroid");
     }*/
@@ -123,6 +122,8 @@ public class MainActivity extends Activity {
     boolean dialogOpenned = false;
 
     boolean runningSession = false;
+
+    boolean flag = false;
 
     Handler timerHandler = new Handler();
     Runnable timerRunnable = new Runnable() {
@@ -224,9 +225,6 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Intent intent = getIntent();
-        String message = intent.getStringExtra(LoginActivity.EXTRA_MESSAGE);
 
         nskAlgoSdk = new NskAlgoSdk();
 
@@ -458,6 +456,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 nskAlgoSdk.NskAlgoStop();
+                runningSession = false;
             }
         });
 
@@ -606,6 +605,9 @@ public class MainActivity extends Activity {
                         String sqStr = NskAlgoSignalQuality.values()[fLevel].toString();
                         Log.d(TAG, "setOnSignalQualityListener: level: " + sqStr + "" + NskAlgoSignalQuality.values().toString());
                         sqText.setText(sqStr);
+                        //Toast toast = Toast.makeText(getApplicationContext(), "Connected", Toast.LENGTH_SHORT);
+                        //toast.show();
+
                     }
                 });
             }
@@ -633,6 +635,7 @@ public class MainActivity extends Activity {
                     @Override
                     public void run() {
                         // change UI elements here
+
                         stateText.setText(finalStateStr);
 
                         if (finalState == NskAlgoState.NSK_ALGO_STATE_RUNNING.value || finalState == NskAlgoState.NSK_ALGO_STATE_COLLECTING_BASELINE_DATA.value) {
@@ -676,11 +679,13 @@ public class MainActivity extends Activity {
                             startButton.setEnabled(false);
                             stopButton.setEnabled(true);
                         } else if (finalState == NskAlgoState.NSK_ALGO_STATE_INITED.value || finalState == NskAlgoState.NSK_ALGO_STATE_UNINTIED.value) {
+
                             bRunning = false;
                             startButton.setText("Start");
                             //startButton.setEnabled(true);
                             stopButton.setEnabled(false);
                         }
+
                     }
                 });
             }
@@ -693,17 +698,27 @@ public class MainActivity extends Activity {
                     @Override
                     public void run() {
                         // change UI elements here
+
                         String sqStr = NskAlgoSignalQuality.values()[level].toString();
                         sqText.setText(sqStr);
 
-                        Log.d(TAG, "" + runningSession);
+                        //Log.d(TAG, "" + runningSession);
+
+                        if (flag == false) {
+
+                            Toast toast = Toast.makeText(getApplicationContext(), "Connected", Toast.LENGTH_SHORT);
+                            toast.show();
+                            flag = true;
+
+                        }
 
                         if (level == 0 && runningSession == false) {
                             startButton.setEnabled(true);
                             //runningSession = true;
                         }
                         else {
-                            showToast("Unsatisfying Signal Quality, please adjust the device or change batteries", Toast.LENGTH_SHORT);
+                            Toast toast2 = Toast.makeText(getApplicationContext(), "Unsatisfying Signal Quality, please adjust the device or change batteries", Toast.LENGTH_SHORT);
+                            toast2.show();
                             startButton.setEnabled(false);
                         }
 
@@ -1036,7 +1051,7 @@ public class MainActivity extends Activity {
                     // We have to call tgStreamReader.stop() and tgStreamReader.close() much more than
                     // tgStreamReader.connectAndstart(), because we have to prepare for that.
 
-                    runningSession = false;
+                    //runningSession = false;
 
                     for (String s : bpGraphValues) {
                         if (s=="begin")
@@ -1175,7 +1190,14 @@ public class MainActivity extends Activity {
         // the attachment
         emailIntent .putExtra(Intent.EXTRA_STREAM, path);
         // the mail subject
-        emailIntent .putExtra(Intent.EXTRA_SUBJECT, message);
+
+        Bundle b;
+        b = getIntent().getExtras();
+        String subject = b.getString("subject");
+
+        Log.d(TAG, "The received message is: " + subject);
+
+        emailIntent .putExtra(Intent.EXTRA_SUBJECT, subject);
         startActivity(Intent.createChooser(emailIntent , "Send email..."));
     }
 }

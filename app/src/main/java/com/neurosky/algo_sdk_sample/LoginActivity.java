@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import static android.R.id.message;
+
 
 /**
  * A login screen that offers login via email/password.
@@ -23,7 +25,7 @@ public class LoginActivity extends ActionBarActivity implements LoaderCallbacks<
      * A dummy authentication store containing known user names and passwords.
      * TODO: remove after connecting to a real authentication system.
      */
-    public static final String EXTRA_MESSAGE = "teste";
+
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -39,13 +41,12 @@ public class LoginActivity extends ActionBarActivity implements LoaderCallbacks<
         enterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 EditText editText = (EditText) findViewById(R.id.id);
-                String message = editText.getText().toString();
-                Log.d(TAG, message);
-                Log.d(TAG, editText.getText().toString());
-                intent.putExtra(EXTRA_MESSAGE, message);
+                String userID = editText.getText().toString();
+                Log.d(TAG, "The passed message is: " + userID);
+                Log.d(TAG, "The inserted text was: " + editText.getText().toString());
+                intent.putExtra("subject", userID);
                 startActivity(intent);
 
             }
