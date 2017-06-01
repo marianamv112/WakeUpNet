@@ -47,7 +47,16 @@ import java.util.ArrayList;
 public class MainActivity extends Activity {
 
     final String TAG = "MainActivityTag";
+
+    //Attention values below 50 are considered disattention
+    final Integer ATTENTIONTHRESHOLD  = 50;
+
+    //If the user is distracted during 5 minutes he must to do a pause
+    final Integer TIMETOPAUSE  = 300;
+
     //public static final String EXTRA_MESSAGE = "teste";
+
+
     /*static {
         System.loadLibrary("NskAlgoAndroid");
     }*/
@@ -126,6 +135,8 @@ public class MainActivity extends Activity {
 
     boolean flag = false;
 
+    int secCounter;
+
     Handler timerHandler = new Handler();
     Runnable timerRunnable = new Runnable() {
 
@@ -141,10 +152,32 @@ public class MainActivity extends Activity {
             timerTextView.setText(String.format("%02d:%02d", minutes, seconds));
             timerHandler.postDelayed(this, 500);
 
+
+            secCounter = 0;
+
             if (breakStatus == false) {
                 if (minutes == 25) {
                     workRoutine();
+
+                } else if (minutes < 25) {
+
+                    for (Integer i : attValues) {
+
+
+                        if (i < ATTENTIONTHRESHOLD && secCounter < TIMETOPAUSE) {
+                            secCounter++;
+                            Log.d(TAG, "i: " + i + " secCounter: " + secCounter);
+
+                        }
+
+                        else if (secCounter == TIMETOPAUSE) {
+                            Log.d(TAG, "i: " + i + " secCounter: " + secCounter);
+                            workRoutine();
+                        }
+
+                    }
                 }
+
             } else {
                 if (minutes == 5) {
                     breakRoutine();
@@ -188,6 +221,7 @@ public class MainActivity extends Activity {
 
     public void workRoutine() {
         breakStatus = true;
+        secCounter = 0;
         AlertDialog.Builder builder;
         builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("Break Time");
@@ -354,7 +388,7 @@ public class MainActivity extends Activity {
                         bInited = true;
                     }
 
-                    Log.d(TAG, "NSK_ALGO_Init() " + ret);
+                    //Log.d(TAG, "NSK_ALGO_Init() " + ret);
                     String sdkVersion = "SDK ver.: " + nskAlgoSdk.NskAlgoSdkVersion();
 
                     if ((algoTypes & NskAlgoType.NSK_ALGO_TYPE_ATT.value) != 0) {
@@ -604,7 +638,7 @@ public class MainActivity extends Activity {
                     public void run() {
                         // change UI elements here
                         String sqStr = NskAlgoSignalQuality.values()[fLevel].toString();
-                        Log.d(TAG, "setOnSignalQualityListener: level: " + sqStr + "" + NskAlgoSignalQuality.values().toString());
+                        //Log.d(TAG, "setOnSignalQualityListener: level: " + sqStr + "" + NskAlgoSignalQuality.values().toString());
                         sqText.setText(sqStr);
                         //Toast toast = Toast.makeText(getApplicationContext(), "Connected", Toast.LENGTH_SHORT);
                         //toast.show();
@@ -629,7 +663,7 @@ public class MainActivity extends Activity {
                         reasonStr = r.toString();
                     }
                 }
-                Log.d(TAG, "NskAlgoSdkStateChangeListener: state: " + stateStr + ", reason: " + reasonStr);
+                //Log.d(TAG, "NskAlgoSdkStateChangeListener: state: " + stateStr + ", reason: " + reasonStr);
                 final String finalStateStr = stateStr + " | " + reasonStr;
                 final int finalState = state;
                 runOnUiThread(new Runnable() {
@@ -731,7 +765,7 @@ public class MainActivity extends Activity {
         nskAlgoSdk.setOnBPAlgoIndexListener(new NskAlgoSdk.OnBPAlgoIndexListener() {
             @Override
             public void onBPAlgoIndex(float delta, float theta, float alpha, float beta, float gamma) {
-                Log.d(TAG, "NskAlgoBPAlgoIndexListener: BP: D[" + delta + " dB] T[" + theta + " dB] A[" + alpha + " dB] B[" + beta + " dB] G[" + gamma + "]");
+                //Log.d(TAG, "NskAlgoBPAlgoIndexListener: BP: D[" + delta + " dB] T[" + theta + " dB] A[" + alpha + " dB] B[" + beta + " dB] G[" + gamma + "]");
 
                 String sDelta = Float.toString(delta);
                 String sTheta = Float.toString(theta);
@@ -1005,7 +1039,7 @@ public class MainActivity extends Activity {
         @Override
         public void onStatesChanged(int connectionStates) {
             // TODO Auto-generated method stub
-            Log.d(TAG, "connectionStates change to: " + connectionStates);
+            //Log.d(TAG, "connectionStates change to: " + connectionStates);
             switch (connectionStates) {
                 case ConnectionStates.STATE_CONNECTING:
                     // Do something when connecting
@@ -1080,8 +1114,8 @@ public class MainActivity extends Activity {
 
                         File outputFile = new File(path, "gnuPlotInput.dat");
 
-                            if (outputFile.exists())
-                                Log.d(TAG, "File created");
+                            //if (outputFile.exists())
+                            //    Log.d(TAG, "File created");
 
 
                         out = new FileOutputStream(outputFile);
@@ -1199,7 +1233,7 @@ public class MainActivity extends Activity {
         b = getIntent().getExtras();
         String subject = b.getString("subject");
 
-        Log.d(TAG, "The received message is: " + subject);
+        //Log.d(TAG, "The received message is: " + subject);
 
         emailIntent .putExtra(Intent.EXTRA_SUBJECT, subject);
         startActivity(Intent.createChooser(emailIntent , "Send email..."));
