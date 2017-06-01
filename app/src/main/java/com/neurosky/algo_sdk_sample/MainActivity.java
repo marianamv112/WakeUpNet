@@ -110,6 +110,7 @@ public class MainActivity extends Activity {
     //private int bLastOutputInterval = 1;
 
     ArrayList<String> bpGraphValues = new ArrayList<String>();
+    ArrayList<Integer> attValues = new ArrayList<Integer>();
     String gnuPlotInput = "";
     int gnuPlotXXAxis = 0;
 
@@ -770,6 +771,9 @@ public class MainActivity extends Activity {
                 //bpGraphValues.add("beginATT");
                 String attValueStr = Float.toString(value);
                 bpGraphValues.add(attValueStr);
+
+                attValues.add(value);
+                Log.d(TAG, "Attention ArrayList: " + attValues);
 
                 final String finalAttStr = attStr;
                 runOnUiThread(new Runnable() {
