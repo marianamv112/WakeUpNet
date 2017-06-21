@@ -54,7 +54,14 @@ public class MainActivity extends Activity {
     //If the user is distracted during 5 minutes he must to do a pause
     final Integer TIMETOPAUSE  = 300;
 
-    //public static final String EXTRA_MESSAGE = "teste";
+    final Integer WORKMINUTES = 25;
+
+    final Integer PAUSEMINUTES = 5;
+
+    //This flag is true during the running of the first phase, and false during the running of second phase
+    boolean firstPhase = true;
+
+    ArrayList<Integer> breakInstants = new ArrayList<Integer>();
 
 
     /*static {
@@ -119,7 +126,8 @@ public class MainActivity extends Activity {
     //private int bLastOutputInterval = 1;
 
     ArrayList<String> bpGraphValues = new ArrayList<String>();
-    ArrayList<Integer> attValues = new ArrayList<Integer>();
+    //ArrayList<Integer> attValues = new ArrayList<Integer>();
+
     String gnuPlotInput = "";
     int gnuPlotXXAxis = 0;
 
@@ -135,6 +143,8 @@ public class MainActivity extends Activity {
 
     boolean flag = false;
 
+    boolean outlier = false;
+
     int secCounter;
 
     Handler timerHandler = new Handler();
@@ -149,43 +159,64 @@ public class MainActivity extends Activity {
             minutes = seconds / 60;
             seconds = seconds % 60;
 
+            if (firstPhase == true ) {
+                //Toast firstPhaseToast = Toast.makeText(getApplicationContext(), "First Session Began" ,Toast.LENGTH_LONG);
+                //firstPhaseToast.show();
+                firstPhaseRunning();
+            } else {
+                secondPhaseRunning();
+            }
+
             timerTextView.setText(String.format("%02d:%02d", minutes, seconds));
             timerHandler.postDelayed(this, 500);
+        }
+    };
 
+    public void firstPhaseRunning() {
 
-            secCounter = 0;
-
-            if (breakStatus == false) {
-                if (minutes == 25) {
-                    workRoutine();
-
-                } else if (minutes < 25) {
-
-                    for (Integer i : attValues) {
-
-
-                        if (i < ATTENTIONTHRESHOLD && secCounter < TIMETOPAUSE) {
-                            secCounter++;
-                            Log.d(TAG, "i: " + i + " secCounter: " + secCounter);
-
-                        }
-
-                        else if (secCounter == TIMETOPAUSE) {
-                            Log.d(TAG, "i: " + i + " secCounter: " + secCounter);
-                            workRoutine();
-                        }
-
-                    }
-                }
-
-            } else {
-                if (minutes == 5) {
+        if (breakStatus == false && firstPhase == true) {
+            if (minutes == WORKMINUTES) {
+                workRoutine();
+            }
+        } else {
+                if (minutes == PAUSEMINUTES) {
                     breakRoutine();
                 }
             }
-
         }
-    };
+
+
+    public void secondPhaseRunning() {
+
+        if (secCounter == TIMETOPAUSE) {
+            breakInstants.add(minutes);
+            workRoutine();
+        }
+    }
+
+    public void CPUdecision(Integer attentionValue) {
+
+        if (breakStatus == false) {
+            Log.d(TAG, "secCounter = " + secCounter + " att Value = " + attentionValue);
+            if (attentionValue <= ATTENTIONTHRESHOLD && secCounter < TIMETOPAUSE) {
+                secCounter++;
+                if(outlier == true)
+                    outlier = false;
+            }
+
+            else if (attentionValue > ATTENTIONTHRESHOLD && secCounter > 0) {
+                if (outlier == false) {
+                    outlier = true;
+                    secCounter++;
+
+                } else {
+                    secCounter = 0;
+                    outlier = false;
+                }
+            }
+        }
+    }
+
 
     public void breakRoutine() {
         breakStatus = false;
@@ -206,6 +237,11 @@ public class MainActivity extends Activity {
                 timerTextView.setText("00:00");
                 startTime = System.currentTimeMillis();
                 timerHandler.postDelayed(timerRunnable, 0);
+                firstPhase = false;
+                Toast sndPhaseToast = Toast.makeText(getApplicationContext(), "Second Session Began" ,Toast.LENGTH_LONG);
+                sndPhaseToast.show();
+
+
             }
         });
         AlertDialog alertDialog = builder.create();
@@ -216,7 +252,6 @@ public class MainActivity extends Activity {
             alertDialog.show();
             dialogOpenned = true;
         }
-
     }
 
     public void workRoutine() {
@@ -478,11 +513,18 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 runningSession = true;
+
+                if (firstPhase == true) {
+                    Toast firstPhaseToast = Toast.makeText(getApplicationContext(), "First Session Began" ,Toast.LENGTH_LONG);
+                    firstPhaseToast.show();
+                }
+
+
                 if (bRunning == false) {
                     nskAlgoSdk.NskAlgoStart(false);
                 } else {
                     nskAlgoSdk.NskAlgoPause();
-                    //
+
                 }
             }
         });
@@ -638,10 +680,19 @@ public class MainActivity extends Activity {
                     public void run() {
                         // change UI elements here
                         String sqStr = NskAlgoSignalQuality.values()[fLevel].toString();
+                        Log.d(TAG, "?" + NskAlgoSignalQuality.values()[fLevel].toString());
                         //Log.d(TAG, "setOnSignalQualityListener: level: " + sqStr + "" + NskAlgoSignalQuality.values().toString());
                         sqText.setText(sqStr);
-                        //Toast toast = Toast.makeText(getApplicationContext(), "Connected", Toast.LENGTH_SHORT);
-                        //toast.show();
+
+                        /*Log.d(TAG, "ISTO: " + sqStr);
+
+                        if (!sqStr.equals("GOOD")) {
+                            Toast toast = Toast.makeText(getApplicationContext(), "No Signal", Toast.LENGTH_SHORT);
+                            toast.show();
+                        } else {
+                            Toast toast = Toast.makeText(getApplicationContext(), "First sessions", Toast.LENGTH_SHORT);
+                            toast.show();
+                        }*/
 
                     }
                 });
@@ -672,6 +723,7 @@ public class MainActivity extends Activity {
                         // change UI elements here
 
                         stateText.setText(finalStateStr);
+
 
                         if (finalState == NskAlgoState.NSK_ALGO_STATE_RUNNING.value || finalState == NskAlgoState.NSK_ALGO_STATE_COLLECTING_BASELINE_DATA.value) {
                             bRunning = true;
@@ -707,6 +759,7 @@ public class MainActivity extends Activity {
                             bRunning = false;
                             startButton.setText("Start");
                             //startButton.setEnabled(true);
+                            Log.d(TAG, "ESTE É O SÍTIO");
                             stopButton.setEnabled(true);
                         } else if (finalState == NskAlgoState.NSK_ALGO_STATE_ANALYSING_BULK_DATA.value) {
                             bRunning = true;
@@ -737,26 +790,24 @@ public class MainActivity extends Activity {
                         String sqStr = NskAlgoSignalQuality.values()[level].toString();
                         sqText.setText(sqStr);
 
-                        //Log.d(TAG, "" + runningSession);
+                        Log.d(TAG, "Please: " + sqStr + "runningSession: " + runningSession);
+                        Toast toast2 = Toast.makeText(getApplicationContext(), "Unsatisfying Signal Quality, please adjust the device or change batteries", Toast.LENGTH_SHORT);
 
-                        if (flag == false) {
 
-                            Toast toast = Toast.makeText(getApplicationContext(), "Connected", Toast.LENGTH_SHORT);
-                            toast.show();
-                            flag = true;
-
+                        if (runningSession == false && !sqStr.equals("GOOD")) {
+                            /*Toast toast = Toast.makeText(getApplicationContext(), "Connected", Toast.LENGTH_SHORT);
+                            toast.show();*/
+                            toast2.show();
                         }
-
                         if (level == 0 && runningSession == false) {
                             startButton.setEnabled(true);
                             //runningSession = true;
+                            toast2.cancel();
                         }
                         else {
-                            Toast toast2 = Toast.makeText(getApplicationContext(), "Unsatisfying Signal Quality, please adjust the device or change batteries", Toast.LENGTH_SHORT);
-                            toast2.show();
+                            //toast2.show();
                             startButton.setEnabled(false);
                         }
-
                     }
                 });
             }
@@ -804,10 +855,13 @@ public class MainActivity extends Activity {
 
                 //bpGraphValues.add("beginATT");
                 String attValueStr = Float.toString(value);
+
+
                 bpGraphValues.add(attValueStr);
 
-                attValues.add(value);
-                Log.d(TAG, "Attention ArrayList: " + attValues);
+                if (firstPhase == false)
+                    CPUdecision(value);
+                //Log.d(TAG, "Attention ArrayList: " + attValues);
 
                 final String finalAttStr = attStr;
                 runOnUiThread(new Runnable() {
@@ -1047,7 +1101,7 @@ public class MainActivity extends Activity {
                 case ConnectionStates.STATE_CONNECTED:
                     // Do something when connected
                     tgStreamReader.start();
-                    showToast("Connected", Toast.LENGTH_SHORT);
+                    showToast("ConnectedonStatesChanged", Toast.LENGTH_SHORT);
                     break;
                 case ConnectionStates.STATE_WORKING:
                     // Do something when working
@@ -1059,11 +1113,7 @@ public class MainActivity extends Activity {
 
                     MainActivity.this.runOnUiThread(new Runnable() {
                         public void run() {
-                            Button startButton = (Button) findViewById(R.id.startButton);
-                            //Log.d(TAG, "NAUM FASSU IDEIA QUE BASE SERIA ");
-                            //while (!sqText.getText().equals("GOOD")) {
-                            //    showToast("Signal Quality Poor, please adjust the device", Toast.LENGTH_SHORT);
-                            //}
+
                             //startButton.setEnabled(true);
                         }
 
@@ -1089,7 +1139,7 @@ public class MainActivity extends Activity {
                     // We have to call tgStreamReader.stop() and tgStreamReader.close() much more than
                     // tgStreamReader.connectAndstart(), because we have to prepare for that.
 
-                    //runningSession = false;
+                    runningSession = false;
 
                     for (String s : bpGraphValues) {
                         if (s=="begin")
@@ -1228,10 +1278,11 @@ public class MainActivity extends Activity {
         // the attachment
         emailIntent .putExtra(Intent.EXTRA_STREAM, path);
         // the mail subject
-
         Bundle b;
         b = getIntent().getExtras();
         String subject = b.getString("subject");
+        // the email content
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "The pauses during second phase happened at: " + breakInstants.toString());
 
         //Log.d(TAG, "The received message is: " + subject);
 
