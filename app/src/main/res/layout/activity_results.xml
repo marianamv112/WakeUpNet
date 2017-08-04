@@ -1,0 +1,199 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="left"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.neurosky.algo_sdk_sample.ResultsActivity">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal">
+
+        <TextView android:text="Session duration: "
+            android:id="@+id/sessionDur"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:text="--"
+            android:id="@+id/sessionDurText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/sessionDur"
+            android:layout_alignBaseline="@+id/sessionDur"
+            />
+
+        <TextView
+            android:text=" minutes"
+            android:id="@+id/minutesSessDur"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/sessionDurText"
+            android:layout_alignBaseline="@+id/sessionDurText"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal">
+
+    <TextView android:text="Maximum duration of continuous work: "
+        android:id="@+id/maxSessionDur"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:text="--"
+        android:id="@+id/maxSessionDurText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/maxSessionDur"
+        android:layout_alignBaseline="@+id/maxSessionDur"
+
+        />
+
+        <TextView
+            android:text="minutes"
+            android:id="@+id/minutesMax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/maxSessionDurText"
+            android:layout_alignBaseline="@+id/maxSessionDurText"
+
+            />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal">
+
+    <TextView android:text="Number of breaks: "
+        android:id="@+id/numBreaks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        />
+
+    <TextView
+        android:text="--"
+        android:id="@+id/numBreaksText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/numBreaks"
+        android:layout_alignBaseline="@+id/numBreaks"
+
+        />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal">
+
+    <TextView android:text="Break instants(minutes): "
+        android:id="@+id/breaksInst"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:text="--"
+        android:id="@+id/breaksInstText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/breaksInst"
+        android:layout_alignBaseline="@+id/breaksInst"
+
+        />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal">
+
+        <TextView android:text="You were most focused during: "
+            android:id="@+id/focusRecord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:text="--"
+            android:id="@+id/lowerBond"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/focusRecord"
+            android:layout_alignBaseline="@+id/focusRecord"
+            />
+
+        <TextView
+            android:text=" and "
+            android:id="@+id/and"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/lowerBond"
+            android:layout_alignBaseline="@+id/lowerBond"
+            />
+
+        <TextView
+            android:text="--"
+            android:id="@+id/upperBond"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/and"
+            android:layout_alignBaseline="@+id/and"
+
+            />
+
+        <TextView
+            android:text=" minutes."
+            android:id="@+id/minutes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/upperBond"
+            android:layout_alignBaseline="@+id/upperBond"
+
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Send Results"
+            android:id="@+id/sendButton"
+            android:textSize="12dp"
+
+            android:layout_alignParentLeft="true" />
+
+    </RelativeLayout>
+
+</LinearLayout>

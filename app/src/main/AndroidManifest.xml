@@ -21,9 +21,7 @@
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation"
             android:label="Algo_SDK_Sample"
-            android:screenOrientation="portrait">
-
-        </activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login">
@@ -33,6 +31,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ResultsActivity"
+            android:label="@string/title_activity_results" />
     </application>
 
 </manifest>

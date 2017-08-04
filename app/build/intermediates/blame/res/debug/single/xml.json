@@ -1,7 +1,15 @@
 [
     {
+        "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/xml/pref_notification.xml",
+        "source": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/res/xml/pref_notification.xml"
+    },
+    {
         "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/xml/line_point_formatter_with_plf4.xml",
         "source": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/res/xml/line_point_formatter_with_plf4.xml"
+    },
+    {
+        "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/xml/pref_data_sync.xml",
+        "source": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/res/xml/pref_data_sync.xml"
     },
     {
         "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/xml/line_point_formatter_with_plf1.xml",
@@ -10,6 +18,14 @@
     {
         "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/xml/line_point_formatter_with_plf3.xml",
         "source": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/res/xml/line_point_formatter_with_plf3.xml"
+    },
+    {
+        "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/xml/pref_headers.xml",
+        "source": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/res/xml/pref_headers.xml"
+    },
+    {
+        "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/xml/pref_general.xml",
+        "source": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/res/xml/pref_general.xml"
     },
     {
         "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/xml/line_point_formatter_with_plf2.xml",

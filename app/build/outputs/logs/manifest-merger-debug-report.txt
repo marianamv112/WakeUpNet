@@ -1,6 +1,6 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:2:1-38:12
+ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:2:1-39:12
 	package
 		ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:3:5-43
 		INJECTED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml
@@ -42,8 +42,9 @@ ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_An
 	android:name
 		ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:13:22-69
 application
-ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:15:5-36:19
-MERGED from [com.android.support:appcompat-v7:19.1.0] /Users/mariana/.android/build-cache/963454b57f7025c1c3fd0078c2a15d59e8117e2a/output/AndroidManifest.xml:19:5-20
+ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:15:5-37:19
+MERGED from [com.android.support:appcompat-v7:22.0.0] /Users/mariana/.android/build-cache/113c90dc0bd4ceee02b72067cfac5315962e91db/output/AndroidManifest.xml:22:5-20
+MERGED from [com.android.support:support-v4:22.0.0] /Users/mariana/.android/build-cache/2483b6dba1a83204670c119eb432b44336b31bb8/output/AndroidManifest.xml:22:5-20
 	android:label
 		ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:18:9-40
 	android:allowBackup
@@ -53,7 +54,7 @@ MERGED from [com.android.support:appcompat-v7:19.1.0] /Users/mariana/.android/bu
 	android:theme
 		ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:19:9-40
 activity#com.neurosky.algo_sdk_sample.MainActivity
-ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:20:9-26:20
+ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:20:9-24:52
 	android:screenOrientation
 		ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:24:13-49
 	android:label
@@ -63,24 +64,31 @@ ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_An
 	android:name
 		ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:21:13-41
 activity#com.neurosky.algo_sdk_sample.LoginActivity
-ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:27:9-35:20
+ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:25:9-33:20
 	android:label
-		ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:29:13-57
+		ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:27:13-57
 	android:name
-		ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:28:13-42
+		ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:26:13-42
 intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
-ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:30:13-34:29
+ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:28:13-32:29
 action#android.intent.action.MAIN
-ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:31:17-69
+ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:29:17-69
 	android:name
-		ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:31:25-66
+		ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:29:25-66
 category#android.intent.category.LAUNCHER
-ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:33:17-77
+ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:31:17-77
 	android:name
-		ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:33:27-74
+		ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:31:27-74
+activity#com.neurosky.algo_sdk_sample.ResultsActivity
+ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:34:9-36:62
+	android:label
+		ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:36:13-59
+	android:name
+		ADDED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml:35:13-44
 uses-sdk
 INJECTED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
-MERGED from [com.android.support:appcompat-v7:19.1.0] /Users/mariana/.android/build-cache/963454b57f7025c1c3fd0078c2a15d59e8117e2a/output/AndroidManifest.xml:18:5-42
+MERGED from [com.android.support:appcompat-v7:22.0.0] /Users/mariana/.android/build-cache/113c90dc0bd4ceee02b72067cfac5315962e91db/output/AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:support-v4:22.0.0] /Users/mariana/.android/build-cache/2483b6dba1a83204670c119eb432b44336b31bb8/output/AndroidManifest.xml:20:5-43
 	android:targetSdkVersion
 		INJECTED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml
 		INJECTED from /Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/src/main/AndroidManifest.xml

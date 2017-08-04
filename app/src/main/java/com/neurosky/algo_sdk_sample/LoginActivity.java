@@ -11,8 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import static android.R.id.message;
-
 
 /**
  * A login screen that offers login via email/password.
@@ -41,13 +39,13 @@ public class LoginActivity extends ActionBarActivity implements LoaderCallbacks<
         enterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+
+                Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                 EditText editText = (EditText) findViewById(R.id.id);
                 String userID = editText.getText().toString();
-                Log.d(TAG, "The passed message is: " + userID);
-                Log.d(TAG, "The inserted text was: " + editText.getText().toString());
-                intent.putExtra("subject", userID);
-                startActivity(intent);
+                mainIntent.putExtra("subject", userID);
+                Log.d("Login", userID );
+                startActivity(mainIntent);
 
             }
         });

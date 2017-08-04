@@ -9,9 +9,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
@@ -36,13 +34,8 @@ import com.neurosky.connection.DataType.MindDataType;
 import com.neurosky.connection.TgStreamHandler;
 import com.neurosky.connection.TgStreamReader;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class MainActivity extends Activity {
 
@@ -52,7 +45,7 @@ public class MainActivity extends Activity {
     final Integer ATTENTIONTHRESHOLD  = 50;
 
     //If the user is distracted during 5 minutes he must to do a pause
-    final Integer TIMETOPAUSE  = 300;
+    final Integer PAUSESECONDS  = 300;
 
     final Integer WORKMINUTES = 25;
 
@@ -61,7 +54,12 @@ public class MainActivity extends Activity {
     //This flag is true during the running of the first phase, and false during the running of second phase
     boolean firstPhase = true;
 
+    LinkedList<Integer> attCircularBuf = new LinkedList<Integer>();
     ArrayList<Integer> breakInstants = new ArrayList<Integer>();
+    Integer sessionDuration = 0;
+    Integer avgRecord = 0;
+    Integer lowerBond = 0;
+    Integer upperBond = 0;
 
 
     /*static {
@@ -102,6 +100,7 @@ public class MainActivity extends Activity {
     private Button setIntervalButton;
     private Button startButton;
     private Button stopButton;
+    private Button resultsButton;
 
     //private SeekBar intervalSeekBar;
     //private TextView intervalText;
@@ -126,7 +125,7 @@ public class MainActivity extends Activity {
     //private int bLastOutputInterval = 1;
 
     ArrayList<String> bpGraphValues = new ArrayList<String>();
-    //ArrayList<Integer> attValues = new ArrayList<Integer>();
+
 
     String gnuPlotInput = "";
     int gnuPlotXXAxis = 0;
@@ -138,14 +137,13 @@ public class MainActivity extends Activity {
     int minutes;
     boolean breakStatus = false;
     boolean dialogOpenned = false;
+    boolean stopButtonClicked = false;
 
     boolean runningSession = false;
 
-    boolean flag = false;
 
-    boolean outlier = false;
+    int aux = minutes + PAUSEMINUTES;;
 
-    int secCounter;
 
     Handler timerHandler = new Handler();
     Runnable timerRunnable = new Runnable() {
@@ -154,7 +152,9 @@ public class MainActivity extends Activity {
         public void run() {
 
             timerTextView = (TextView) findViewById(R.id.timerTextView);
+
             millis = System.currentTimeMillis() - startTime;
+
             seconds = (int) (millis / 1000);
             minutes = seconds / 60;
             seconds = seconds % 60;
@@ -188,38 +188,143 @@ public class MainActivity extends Activity {
 
     public void secondPhaseRunning() {
 
-        if (secCounter == TIMETOPAUSE) {
-            breakInstants.add(minutes);
-            workRoutine();
+
+        int finalStop = sessionDuration + WORKMINUTES;
+        Log.d(TAG, "Verify: " + finalStop );
+
+        if (breakStatus == true && minutes == PAUSEMINUTES) {
+            Log.d(TAG, "firstBase");
+            breakRoutine();
+            while (!attCircularBuf.isEmpty()) {
+                attCircularBuf.removeFirst();
+            }
+            CPUdecision();
+        }
+
+        else if (breakStatus==false && minutes < WORKMINUTES) {
+            Log.d(TAG, "secondBase" );
+            CPUdecision();
+        }
+        else if (breakStatus == false && minutes == finalStop) {
+            Log.d(TAG, "thirdbase");
+
+            boolean stopLoop = false;
+            for (int i=0; i < breakInstants.size(); i++) {
+                if (breakInstants.get(i) == WORKMINUTES)
+                    stopLoop = true;
+            }
+
+            if(stopLoop == false) {
+                sessionDuration = minutes;
+                breakInstants.add(minutes);
+                workRoutine();
+            }
+
         }
     }
 
-    public void CPUdecision(Integer attentionValue) {
+    public void CPUdecision() {
 
-        if (breakStatus == false) {
-            Log.d(TAG, "secCounter = " + secCounter + " att Value = " + attentionValue);
-            if (attentionValue <= ATTENTIONTHRESHOLD && secCounter < TIMETOPAUSE) {
-                secCounter++;
-                if(outlier == true)
-                    outlier = false;
-            }
+            Log.d(TAG, "Instant: " + minutes + "\t" + seconds + "\t aux is: " + aux);
+//            Log.d(TAG, "Circular buffer be like: " + attCircularBuf + "\n");
+            int n = (attCircularBuf).size();
+            ArrayList<Integer> validArray = new ArrayList<Integer>() ;
 
-            else if (attentionValue > ATTENTIONTHRESHOLD && secCounter > 0) {
-                if (outlier == false) {
-                    outlier = true;
-                    secCounter++;
+            if (minutes == aux && seconds == 0) {
 
-                } else {
-                    secCounter = 0;
-                    outlier = false;
+                for (int i=0; i < n; i++ ) {
+                    if(attCircularBuf.get(i) != 999) {
+                        validArray.add(attCircularBuf.get(i));
+                    }
+                    //Log.d(TAG, "Valid values: " + validArray.size() + "\n");
                 }
+
+                if(validArray.size() >= PAUSESECONDS/2 ) {
+
+                    int avg = 0;
+                    for(int i = 0; i < validArray.size(); i++)
+                        avg += validArray.get(i);
+                    avg = avg / validArray.size();
+                    Log.d(TAG, "Average of numbers is:" + avg);
+
+
+                    if(avg <= ATTENTIONTHRESHOLD) {
+                        aux = aux + PAUSEMINUTES;
+                        sessionDuration = minutes;
+                        breakInstants.add(minutes);
+                        if(avg >= avgRecord) {
+                            avgRecord = avg;
+                            upperBond = aux;
+                            lowerBond = aux - PAUSEMINUTES;
+                        }
+                        workRoutine();
+                        aux--;
+                    }
+                }
+                aux++;
+                Log.d(TAG, "avgRecord = " + avgRecord + " upperBond: " + upperBond + " lowerBond" + lowerBond);
             }
+    }
+
+
+
+    /*public int totalSessionDuration() {
+
+        Log.d(TAG, "session Duration size: " + sessionDuration.size() );
+            int sessionDur = 0;
+            for (int i=0; i < sessionDuration.size(); i++)
+                sessionDur += sessionDuration.get(i);
+            return sessionDur;
+
+    }*/
+
+    public int maxWorkTime() {
+
+        int record = 0;
+        Log.d(TAG, "breakInstants Size: " + breakInstants.size());
+        if(breakInstants.size() == 1)
+            return sessionDuration;
+        else if(breakInstants.size() == 2) {
+            int one = breakInstants.get(0) - PAUSEMINUTES;
+            int two = breakInstants.get(1) - PAUSEMINUTES;
+            if(one >= two)
+                return one;
+            else
+                return two;
+        }
+        else  {
+            int removeStop = breakInstants.size()-2;
+            Log.d(TAG, "removeStop:  " + removeStop);
+
+            for (int i=0; i < removeStop; i++) {
+                int n = i+1;
+                int diff = breakInstants.get(n) - breakInstants.get(i);
+                Log.d(TAG, "diffs:  " + breakInstants.get(n) + " - " + breakInstants.get(i) + " = " + diff);
+                if(diff > record)
+                    record = diff - n*PAUSEMINUTES;
+            }
+            return record;
         }
     }
 
+    /*public int focusRecord() {
+        int max = 0;
+        for (int i=0; i < sessionDuration.size(); i++) {
+            if(sessionDuration.get(i) >= max)
+                max = sessionDuration.get(i);
+        }
+
+        return max;
+    }*/
 
     public void breakRoutine() {
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
         breakStatus = false;
+
         AlertDialog.Builder builder;
         builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("Work Time");
@@ -234,14 +339,16 @@ public class MainActivity extends Activity {
             @Override
             public void onCancel(DialogInterface dialog) {
                 timerHandler.removeCallbacks(timerRunnable);
-                timerTextView.setText("00:00");
-                startTime = System.currentTimeMillis();
+
+                //timerTextView.setText("18:00");
+                //startTime = System.currentTimeMillis();
+                startTime = System.currentTimeMillis() - sessionDuration*60*1000;
                 timerHandler.postDelayed(timerRunnable, 0);
+
                 firstPhase = false;
                 Toast sndPhaseToast = Toast.makeText(getApplicationContext(), "Second Session Began" ,Toast.LENGTH_LONG);
                 sndPhaseToast.show();
 
-
             }
         });
         AlertDialog alertDialog = builder.create();
@@ -251,42 +358,59 @@ public class MainActivity extends Activity {
             vibrator.vibrate(1000);
             alertDialog.show();
             dialogOpenned = true;
+            }
+
         }
-    }
+    });
+
+}
 
     public void workRoutine() {
-        breakStatus = true;
-        secCounter = 0;
-        AlertDialog.Builder builder;
-        builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("Break Time");
-        builder.setMessage("Click ok to start a 5 minute break");
-        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-                dialogOpenned = false;
-            }
-        });
-        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                timerHandler.removeCallbacks(timerRunnable);
-                timerTextView.setText("00:00");
-                startTime = System.currentTimeMillis();
-                timerHandler.postDelayed(timerRunnable, 0);
-                Toast toast = Toast.makeText(getApplicationContext(), "Break Time just started!", Toast.LENGTH_SHORT);
-                toast.show();
-            }
-        });
-        AlertDialog alertDialog = builder.create();
-        if (dialogOpenned == false) {
 
-            alertDialog.show();
-            Vibrator vibrator;
-            vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            vibrator.vibrate(1000);
-            dialogOpenned = true;
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // change UI elements here
+
+                AlertDialog.Builder builder;
+                builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Break Time");
+                builder.setMessage("Click ok to start a 5 minute break");
+                builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                        dialogOpenned = false;
+                    }
+                });
+                builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        timerHandler.removeCallbacks(timerRunnable);
+                        //timerTextView.setText("18:00");
+                        startTime = System.currentTimeMillis();
+                        timerHandler.postDelayed(timerRunnable, 0);
+
+                        breakStatus = true;
+                        Toast toast = Toast.makeText(getApplicationContext(), "Break Time just started!", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+                });
+
+                AlertDialog alertDialog = builder.create();
+
+
+                if (dialogOpenned == false) {
+                    alertDialog.show();
+                    Vibrator vibrator;
+                    vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    vibrator.vibrate(1000);
+                    dialogOpenned = true;
+                }
+
+            }
+        });
+
+
 
     }
 
@@ -320,6 +444,7 @@ public class MainActivity extends Activity {
         //setIntervalButton = (Button)this.findViewById(R.id.setIntervalButton);
         startButton = (Button)this.findViewById(R.id.startButton);
         stopButton = (Button)this.findViewById(R.id.stopButton);
+        resultsButton = (Button)this.findViewById(R.id.resultsButton);
 
         /*intervalSeekBar = (SeekBar)this.findViewById(R.id.intervalSeekBar);
         intervalText = (TextView)this.findViewById(R.id.intervalText);*/
@@ -338,6 +463,56 @@ public class MainActivity extends Activity {
 
         stateText = (TextView)this.findViewById(R.id.stateText);
         sqText = (TextView)this.findViewById(R.id.sqText);
+
+        resultsButton.setOnClickListener(new View.OnClickListener() {
+                                             @Override
+                                             public void onClick(View v) {
+
+                                                 int maxWorkDuration = maxWorkTime();
+                                                 int numOfBreaks = breakInstants.size()-1;
+
+                                                 Log.d(TAG, "Total session duration was: " + sessionDuration);
+
+                                                 Intent resultsIntent = new Intent(MainActivity.this, ResultsActivity.class);
+                                                 resultsIntent.putExtra("session duration", sessionDuration);
+
+                                                 Bundle b;
+                                                 b = getIntent().getExtras();
+                                                 String subject = b.getString("subject");
+
+                                                 resultsIntent.putExtra("subject", subject);
+
+                                                 if(breakInstants.size() == 1) {
+                                                     resultsIntent.putExtra("num of breaks", numOfBreaks);
+                                                     breakInstants.add(0);
+                                                     resultsIntent.putExtra("break instants", breakInstants);
+                                                 } else {
+                                                     for (int i= 0; i < breakInstants.size()-1; i++) {
+                                                         Log.d(TAG, "Breaks Sent: " + breakInstants.get(i));
+                                                     }
+                                                     Log.d(TAG, "BreakInstants2: " + breakInstants.toString());
+                                                     resultsIntent.putExtra("break instants", breakInstants);
+                                                     resultsIntent.putExtra("num of breaks", numOfBreaks);
+                                                 }
+
+                                                 resultsIntent.putExtra("max duration time", maxWorkDuration);
+
+                                                 resultsIntent.putExtra("lower Bond", lowerBond);
+
+                                                 resultsIntent.putExtra("upper Bond", upperBond);
+
+                                                 resultsIntent.putExtra("raw values", bpGraphValues);
+
+
+
+                                                 //TextView txt = (TextView) findViewById(R.id.id);
+                                                 //String userID = editText.getText().toString();
+                                                 //Log.d(TAG, "The inserted text was: " + editText.getText().toString());
+
+                                                 startActivity(resultsIntent);
+                                             }
+                                         });
+
 
         headsetButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -532,8 +707,14 @@ public class MainActivity extends Activity {
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                stopButtonClicked = true;
                 nskAlgoSdk.NskAlgoStop();
                 runningSession = false;
+                resultsButton.setEnabled(true);
+                //sessionDuration.add(minutes);
+                if(breakStatus == false)
+                    sessionDuration = minutes;
+                breakInstants.add(minutes);
             }
         });
 
@@ -733,16 +914,19 @@ public class MainActivity extends Activity {
                             startTime = System.currentTimeMillis();
                             timerHandler.postDelayed(timerRunnable, 0);
 
-                        } else if (finalState == NskAlgoState.NSK_ALGO_STATE_STOP.value) {
+                        } else if (finalState == NskAlgoState.NSK_ALGO_STATE_STOP.value && stopButtonClicked == true) {
                             bRunning = false;
                             raw_data = null;
                             raw_data_index = 0;
                             //startButton.setText("Start");
-                            startButton.setEnabled(true);
-                            stopButton.setEnabled(false);
-                            timerHandler.removeCallbacks(timerRunnable);
-                            headsetButton.setEnabled(true);
 
+                            //if (stopButtonClicked == true) {
+                                startButton.setEnabled(true);
+                                stopButton.setEnabled(false);
+                                timerHandler.removeCallbacks(timerRunnable);
+                                headsetButton.setEnabled(true);
+                                resultsButton.setEnabled(true);
+                            //}
 
                             if (tgStreamReader != null && tgStreamReader.isBTConnected()) {
 
@@ -759,7 +943,7 @@ public class MainActivity extends Activity {
                             bRunning = false;
                             startButton.setText("Start");
                             //startButton.setEnabled(true);
-                            Log.d(TAG, "ESTE É O SÍTIO");
+                            //Log.d(TAG, "ESTE É O SÍTIO");
                             stopButton.setEnabled(true);
                         } else if (finalState == NskAlgoState.NSK_ALGO_STATE_ANALYSING_BULK_DATA.value) {
                             bRunning = true;
@@ -790,22 +974,18 @@ public class MainActivity extends Activity {
                         String sqStr = NskAlgoSignalQuality.values()[level].toString();
                         sqText.setText(sqStr);
 
-                        Log.d(TAG, "Please: " + sqStr + "runningSession: " + runningSession);
+                        //Log.d(TAG, "Please: " + sqStr + "runningSession: " + runningSession);
                         Toast toast2 = Toast.makeText(getApplicationContext(), "Unsatisfying Signal Quality, please adjust the device or change batteries", Toast.LENGTH_SHORT);
 
 
                         if (runningSession == false && !sqStr.equals("GOOD")) {
-                            /*Toast toast = Toast.makeText(getApplicationContext(), "Connected", Toast.LENGTH_SHORT);
-                            toast.show();*/
                             toast2.show();
                         }
                         if (level == 0 && runningSession == false) {
                             startButton.setEnabled(true);
-                            //runningSession = true;
                             toast2.cancel();
                         }
                         else {
-                            //toast2.show();
                             startButton.setEnabled(false);
                         }
                     }
@@ -850,17 +1030,34 @@ public class MainActivity extends Activity {
         nskAlgoSdk.setOnAttAlgoIndexListener(new NskAlgoSdk.OnAttAlgoIndexListener() {
             @Override
             public void onAttAlgoIndex(int value) {
-                Log.d(TAG, "NskAlgoAttAlgoIndexListener: Attention:" + value);
+                //Log.d(TAG, "NskAlgoAttAlgoIndexListener: Attention:" + value);
                 String attStr = "[" + value + "]";
 
                 //bpGraphValues.add("beginATT");
                 String attValueStr = Float.toString(value);
 
-
                 bpGraphValues.add(attValueStr);
 
-                if (firstPhase == false)
-                    CPUdecision(value);
+                if (firstPhase == false) {
+                    //Forca do sinal
+                    //Log.d(TAG, "Signal Quality: " + sqText.getText() + "Value:" + value);
+                    boolean goodSinQual = sqText.getText().equals("GOOD");
+                    boolean bufspaceLeft = attCircularBuf.size() <= PAUSESECONDS;
+
+                    if( goodSinQual && bufspaceLeft)
+                        attCircularBuf.addFirst(value);
+                    else if (!goodSinQual && !bufspaceLeft) {
+                        attCircularBuf.removeLast();
+                        attCircularBuf.addFirst(999);
+                    } else if (!goodSinQual && bufspaceLeft)
+                        attCircularBuf.addFirst(999);
+                    else if (goodSinQual && !bufspaceLeft) {
+                        attCircularBuf.removeLast();
+                        attCircularBuf.addFirst(value);
+                    }
+                }
+
+
                 //Log.d(TAG, "Attention ArrayList: " + attValues);
 
                 final String finalAttStr = attStr;
@@ -878,7 +1075,7 @@ public class MainActivity extends Activity {
         nskAlgoSdk.setOnMedAlgoIndexListener(new NskAlgoSdk.OnMedAlgoIndexListener() {
             @Override
             public void onMedAlgoIndex(int value) {
-                Log.d(TAG, "NskAlgoMedAlgoIndexListener: Meditation:" + value);
+                //Log.d(TAG, "NskAlgoMedAlgoIndexListener: Meditation:" + value);
                 String medStr = "[" + value + "]";
                 String medValueStr = Float.toString(value);
                 //bpGraphValues.add("beginMED");
@@ -1141,7 +1338,7 @@ public class MainActivity extends Activity {
 
                     runningSession = false;
 
-                    for (String s : bpGraphValues) {
+                    /*for (String s : bpGraphValues) {
                         if (s=="begin")
                             gnuPlotInput += Integer.toString(gnuPlotXXAxis) + "\t";
                         else if (s=="end") {
@@ -1162,7 +1359,7 @@ public class MainActivity extends Activity {
 
                         OutputStream out = null;
 
-                        File outputFile = new File(path, "gnuPlotInput.dat");
+                        outputFile = new File(path, "gnuPlotInput.dat");
 
                             //if (outputFile.exists())
                             //    Log.d(TAG, "File created");
@@ -1175,13 +1372,13 @@ public class MainActivity extends Activity {
                         pw.flush();
                         pw.close();
 
-                        sendEmail(outputFile);
+                        //sendEmail(outputFile);
 
                     } catch (FileNotFoundException e) {
                         Log.d(TAG, "File not found Exception");
                     } catch (IOException i) {
                         Log.d(TAG, "IO EXCEPTION");
-                    }
+                    }*/
                     break;
 
                 case ConnectionStates.STATE_DISCONNECTED:
@@ -1267,7 +1464,7 @@ public class MainActivity extends Activity {
                 .show();
     }
 
-    protected void sendEmail(File filelocation) {
+    /*protected void sendEmail(File filelocation) {
 
         Uri path = Uri.fromFile(filelocation);
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
@@ -1288,5 +1485,5 @@ public class MainActivity extends Activity {
 
         emailIntent .putExtra(Intent.EXTRA_SUBJECT, subject);
         startActivity(Intent.createChooser(emailIntent , "Send email..."));
-    }
+    }*/
 }
