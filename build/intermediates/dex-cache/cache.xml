@@ -3,12 +3,12 @@
 
     <item
         is-multidex="false"
-        jar="/Users/mariana/.android/build-cache/2483b6dba1a83204670c119eb432b44336b31bb8/output/jars/libs/internal_impl-22.0.0.jar"
+        jar="/Users/mariana/.android/build-cache/19cab7b6bcef5e8f67ba60347cbca3d5d2b895c1/output/jars/classes.jar"
         jumboMode="false"
         optimize="true"
         revision="25.0.0"
-        sha1="b5b92f469d515a13d778900f6d50c03d12f35504">
-        <dex dex="/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/pre-dexed/debug/internal_impl-22.0.0_5716a2c578aa6783b347a8e9d9a4404ae86c603b.jar" />
+        sha1="8413c27b45b7fe61dca4a98159f65e2cee215f5a">
+        <dex dex="/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/pre-dexed/debug/classes_03464275f7cf3df3d92de051bb7bfe4a51e8f70f.jar" />
     </item>
     <item
         is-multidex="false"
@@ -21,12 +21,12 @@
     </item>
     <item
         is-multidex="false"
-        jar="/Users/mariana/.android/build-cache/2483b6dba1a83204670c119eb432b44336b31bb8/output/jars/classes.jar"
+        jar="/Users/mariana/.android/build-cache/6c1aebe755431d188a1dbf7345d5b1a9487b1cae/output/jars/classes.jar"
         jumboMode="false"
         optimize="true"
         revision="25.0.0"
-        sha1="4e86306289ace4aa0cfec44a05ed2b410d36989d">
-        <dex dex="/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/pre-dexed/debug/classes_400eef0b55bb7375226ff2fadd80a46285421ceb.jar" />
+        sha1="4fcf0b1879f8caf497c073e1432d398e9e2988c1">
+        <dex dex="/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/pre-dexed/debug/classes_25a9f4abc74e822d5d8160aff4d68156dddc69b6.jar" />
     </item>
     <item
         is-multidex="false"
@@ -39,21 +39,30 @@
     </item>
     <item
         is-multidex="false"
-        jar="/Users/mariana/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/22.0.0/support-annotations-22.0.0.jar"
+        jar="/Users/mariana/.android/build-cache/19cab7b6bcef5e8f67ba60347cbca3d5d2b895c1/output/jars/libs/internal_impl-23.0.0.jar"
         jumboMode="false"
         optimize="true"
         revision="25.0.0"
-        sha1="685d0b2c590447e85284ed84712cb363ba04eff8">
-        <dex dex="/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/pre-dexed/debug/support-annotations-22.0.0_aa748b54fc6e546dbdcc38188059ec0f024752ff.jar" />
+        sha1="8bd336eeae661e8311330284897ee07f8ebaa297">
+        <dex dex="/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/pre-dexed/debug/internal_impl-23.0.0_2071cf77dd1ec11f222ac57f17ef992b33b6e7b1.jar" />
     </item>
     <item
         is-multidex="false"
-        jar="/Users/mariana/.android/build-cache/113c90dc0bd4ceee02b72067cfac5315962e91db/output/jars/classes.jar"
+        jar="/Users/mariana/.android/build-cache/32ddeb82b3d89fcbdea694f0eb3212984e4dd2fd/output/jars/classes.jar"
         jumboMode="false"
         optimize="true"
         revision="25.0.0"
-        sha1="d84409890828e07d344a3b9b1da545dba9897b51">
-        <dex dex="/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/pre-dexed/debug/classes_cfafa4f6015678314580535dbadf2af650954bb3.jar" />
+        sha1="2cd4b982617e544728de0782d718a58ce1b06e3f">
+        <dex dex="/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/pre-dexed/debug/classes_af4536f3ccca5254ca605eed070676d8f03d95cc.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/mariana/.gradle/caches/modules-2/files-2.1/org.jbundle.util.osgi.wrapped/org.jbundle.util.osgi.wrapped.org.apache.http.client/4.1.2/98c86e42679fe7ac066f6c242e0d14f0bce0bb7c/org.jbundle.util.osgi.wrapped.org.apache.http.client-4.1.2.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="98c86e42679fe7ac066f6c242e0d14f0bce0bb7c">
+        <dex dex="/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/pre-dexed/debug/org.jbundle.util.osgi.wrapped.org.apache.http.client-4.1.2_c6f7a5b843fcb0a50d782e89e9e98e9c2044c85d.jar" />
     </item>
     <item
         is-multidex="false"
@@ -63,6 +72,15 @@
         revision="25.0.0"
         sha1="10137dee3cb168bb82e4ccbe76fe0d6107ea90b5">
         <dex dex="/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/pre-dexed/debug/NskAlgoSdk_153354a67ecd0f4715d9cb3b4095cf3a1d41afb8.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/mariana/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/23.0.0/support-annotations-23.0.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="990e7f98a7bad86a40b1f0bcfeb039023afd0839">
+        <dex dex="/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/pre-dexed/debug/support-annotations-23.0.0_9c95328120b67b5a08ea678c3914e5213b65c60b.jar" />
     </item>
 
 </items>

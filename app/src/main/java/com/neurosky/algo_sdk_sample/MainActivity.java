@@ -42,24 +42,35 @@ public class MainActivity extends Activity {
     final String TAG = "MainActivityTag";
 
     //Attention values below 50 are considered disattention
-    final Integer ATTENTIONTHRESHOLD  = 50;
+    final Integer THRESHOLD = 40;
 
     //If the user is distracted during 5 minutes he must to do a pause
-    final Integer PAUSESECONDS  = 300;
 
-    final Integer WORKMINUTES = 25;
+    Integer WORKMINUTES;
 
-    final Integer PAUSEMINUTES = 5;
+    Integer PAUSEMINUTES;
+
+    Integer PAUSESECONDS;
+
+    Integer ORIGINALPAUSEMINUTES;
+
+    Integer ATTCHECKPOINT = 300;
+
+    Integer NEXTCHECKPOINT = 60;
 
     //This flag is true during the running of the first phase, and false during the running of second phase
-    boolean firstPhase = true;
+    boolean firstPhase = false;
+    boolean enoughRest = false;
 
     LinkedList<Integer> attCircularBuf = new LinkedList<Integer>();
+    LinkedList<Integer> medCircularBuf = new LinkedList<Integer>();
     ArrayList<Integer> breakInstants = new ArrayList<Integer>();
     Integer sessionDuration = 0;
     Integer avgRecord = 0;
     Integer lowerBond = 0;
     Integer upperBond = 0;
+
+    String breaks = "";
 
 
     /*static {
@@ -85,7 +96,7 @@ public class MainActivity extends Activity {
 
     // canned data variables
     private short raw_data[] = {0};
-    private int raw_data_index= 0;
+    private int raw_data_index = 0;
     private float output_data[];
     private int output_data_count = 0;
     private int raw_data_sec_len = 85;
@@ -126,6 +137,7 @@ public class MainActivity extends Activity {
 
     ArrayList<String> bpGraphValues = new ArrayList<String>();
 
+    Session currentSession;
 
     String gnuPlotInput = "";
     int gnuPlotXXAxis = 0;
@@ -141,9 +153,7 @@ public class MainActivity extends Activity {
 
     boolean runningSession = false;
 
-
-    int aux = minutes + PAUSEMINUTES;;
-
+    int aux;
 
     Handler timerHandler = new Handler();
     Runnable timerRunnable = new Runnable() {
@@ -152,21 +162,19 @@ public class MainActivity extends Activity {
         public void run() {
 
             timerTextView = (TextView) findViewById(R.id.timerTextView);
-
             millis = System.currentTimeMillis() - startTime;
 
             seconds = (int) (millis / 1000);
             minutes = seconds / 60;
             seconds = seconds % 60;
 
-            if (firstPhase == true ) {
+            if (firstPhase == true) {
                 //Toast firstPhaseToast = Toast.makeText(getApplicationContext(), "First Session Began" ,Toast.LENGTH_LONG);
                 //firstPhaseToast.show();
                 firstPhaseRunning();
             } else {
                 secondPhaseRunning();
             }
-
             timerTextView.setText(String.format("%02d:%02d", minutes, seconds));
             timerHandler.postDelayed(this, 500);
         }
@@ -179,129 +187,154 @@ public class MainActivity extends Activity {
                 workRoutine();
             }
         } else {
-                if (minutes == PAUSEMINUTES) {
-                    breakRoutine();
-                }
+            if (minutes == PAUSEMINUTES) {
+                breakRoutine();
             }
         }
+    }
 
 
     public void secondPhaseRunning() {
 
-
+        //se o user fizer uma pausa aos 10 minutes, pretende trabalhar novamente durante WORKMINUTES com
+        // inicio aos 10 minutos e nao do zero
         int finalStop = sessionDuration + WORKMINUTES;
-        Log.d(TAG, "Verify: " + finalStop );
+        Log.d(TAG, "Verify: " + finalStop);
 
+        //breakstatus = true significa que esta em pausa
+        //se o user está em pausa e chega ao momento do fim da mesma, reinicia uma sessao de trabalho
+        //ALTERAÇÕES: VERIFICAÇÃO DO CANSAÇO DO USER, SUGERIR CONTINUAR NA PAUSA
         if (breakStatus == true && minutes == PAUSEMINUTES) {
             Log.d(TAG, "firstBase");
-            breakRoutine();
+            Log.d("Pause minutes before: ", "" + PAUSEMINUTES);
+
+            CPUdecision(medCircularBuf);
+
+            Log.d("Pause minutes after: ", "" + PAUSEMINUTES);
+
+            if (enoughRest == true)
+                breakRoutine();
+            else
+                extendedBreakRoutine();
+
             while (!attCircularBuf.isEmpty()) {
                 attCircularBuf.removeFirst();
             }
-            CPUdecision();
+            CPUdecision(attCircularBuf); //temos de ver se isto é pra continuar aqui
         }
-
-        else if (breakStatus==false && minutes < WORKMINUTES) {
-            Log.d(TAG, "secondBase" );
-            CPUdecision();
-        }
+        //sessão de trabalho
+        else if (breakStatus == false && minutes < WORKMINUTES) {
+            Log.d(TAG, "secondBase");
+            CPUdecision(attCircularBuf);
+        } //quando chega ao fim da sessão de trabalho
         else if (breakStatus == false && minutes == finalStop) {
             Log.d(TAG, "thirdbase");
 
             boolean stopLoop = false;
-            for (int i=0; i < breakInstants.size(); i++) {
+            for (int i = 0; i < breakInstants.size(); i++) {
                 if (breakInstants.get(i) == WORKMINUTES)
                     stopLoop = true;
             }
 
-            if(stopLoop == false) {
+            if (stopLoop == false) {
                 sessionDuration = minutes;
                 breakInstants.add(minutes);
                 workRoutine();
+                while (!medCircularBuf.isEmpty()) {
+                    medCircularBuf.removeFirst();
+                }
             }
-
+        } else if (breakStatus == true && minutes < PAUSEMINUTES) {
+            Log.d(TAG, "fourthbase");
+            Log.d(TAG, "pauseminutes are:" + PAUSEMINUTES);
+            CPUdecision(medCircularBuf);
         }
     }
 
-    public void CPUdecision() {
 
-            Log.d(TAG, "Instant: " + minutes + "\t" + seconds + "\t aux is: " + aux);
+    public void CPUdecision(LinkedList<Integer> list) {
+
+        Log.d(TAG, "Instant: " + minutes + "\t" + seconds + "\t aux is: " + aux);
 //            Log.d(TAG, "Circular buffer be like: " + attCircularBuf + "\n");
-            int n = (attCircularBuf).size();
-            ArrayList<Integer> validArray = new ArrayList<Integer>() ;
+        int n = (list).size();
+        ArrayList<Integer> validArray = new ArrayList<Integer>();
 
-            if (minutes == aux && seconds == 0) {
+        if (minutes == aux && seconds == 0) {
 
-                for (int i=0; i < n; i++ ) {
-                    if(attCircularBuf.get(i) != 999) {
-                        validArray.add(attCircularBuf.get(i));
-                    }
-                    //Log.d(TAG, "Valid values: " + validArray.size() + "\n");
+            for (int i = 0; i < n; i++) {
+                if (list.get(i) != 999) {
+                    validArray.add(list.get(i));
                 }
+                //Log.d(TAG, "Valid values: " + validArray.size() + "\n");
+            }
 
-                if(validArray.size() >= PAUSESECONDS/2 ) {
+            if (validArray.size() >= ATTCHECKPOINT / 2) {
 
-                    int avg = 0;
-                    for(int i = 0; i < validArray.size(); i++)
-                        avg += validArray.get(i);
-                    avg = avg / validArray.size();
-                    Log.d(TAG, "Average of numbers is:" + avg);
+                int avg = 0;
+                for (int i = 0; i < validArray.size(); i++)
+                    avg += validArray.get(i);
+                avg = avg / validArray.size();
+                Log.d(TAG, "Average of numbers is:" + avg);
 
 
-                    if(avg <= ATTENTIONTHRESHOLD) {
+                if (breakStatus == false) {
+                    if (avg <= THRESHOLD) {
                         aux = aux + PAUSEMINUTES;
                         sessionDuration = minutes;
                         breakInstants.add(minutes);
-                        if(avg >= avgRecord) {
+                        if (avg >= avgRecord) {
                             avgRecord = avg;
                             upperBond = aux;
                             lowerBond = aux - PAUSEMINUTES;
                         }
                         workRoutine();
-                        aux--;
+                        aux = aux - NEXTCHECKPOINT / 60;
+                    }
+                } else {
+                    if (avg >= THRESHOLD) {
+                        enoughRest = true;
                     }
                 }
-                aux++;
-                Log.d(TAG, "avgRecord = " + avgRecord + " upperBond: " + upperBond + " lowerBond" + lowerBond);
-            }
+            } else
+                enoughRest = false;
+            aux = aux + NEXTCHECKPOINT / 60;
+            Log.d(TAG, "avgRecord = " + avgRecord + " upperBond: " + upperBond + " lowerBond" + lowerBond);
+        }
     }
 
 
 
     /*public int totalSessionDuration() {
-
         Log.d(TAG, "session Duration size: " + sessionDuration.size() );
             int sessionDur = 0;
             for (int i=0; i < sessionDuration.size(); i++)
                 sessionDur += sessionDuration.get(i);
             return sessionDur;
-
     }*/
 
     public int maxWorkTime() {
 
         int record = 0;
         Log.d(TAG, "breakInstants Size: " + breakInstants.size());
-        if(breakInstants.size() == 1)
+        if (breakInstants.size() == 1)
             return sessionDuration;
-        else if(breakInstants.size() == 2) {
+        else if (breakInstants.size() == 2) {
             int one = breakInstants.get(0) - PAUSEMINUTES;
             int two = breakInstants.get(1) - PAUSEMINUTES;
-            if(one >= two)
+            if (one >= two)
                 return one;
             else
                 return two;
-        }
-        else  {
-            int removeStop = breakInstants.size()-2;
+        } else {
+            int removeStop = breakInstants.size() - 2;
             Log.d(TAG, "removeStop:  " + removeStop);
 
-            for (int i=0; i < removeStop; i++) {
-                int n = i+1;
+            for (int i = 0; i < removeStop; i++) {
+                int n = i + 1;
                 int diff = breakInstants.get(n) - breakInstants.get(i);
                 Log.d(TAG, "diffs:  " + breakInstants.get(n) + " - " + breakInstants.get(i) + " = " + diff);
-                if(diff > record)
-                    record = diff - n*PAUSEMINUTES;
+                if (diff > record)
+                    record = diff - n * PAUSEMINUTES;
             }
             return record;
         }
@@ -313,7 +346,6 @@ public class MainActivity extends Activity {
             if(sessionDuration.get(i) >= max)
                 max = sessionDuration.get(i);
         }
-
         return max;
     }*/
 
@@ -323,47 +355,90 @@ public class MainActivity extends Activity {
             @Override
             public void run() {
 
-        breakStatus = false;
+                breakStatus = false;
+                PAUSEMINUTES = ORIGINALPAUSEMINUTES;
+                AlertDialog.Builder builder;
+                builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Work Time");
+                builder.setMessage("Click ok to work again");
+                builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                        dialogOpenned = false;
+                    }
+                });
+                builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        timerHandler.removeCallbacks(timerRunnable);
 
-        AlertDialog.Builder builder;
-        builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("Work Time");
-        builder.setMessage("Click ok to work again");
-        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-                dialogOpenned = false;
+                        startTime = System.currentTimeMillis() - sessionDuration * 60 * 1000;
+                        timerHandler.postDelayed(timerRunnable, 0);
+
+                        firstPhase = false;
+                        Toast sndPhaseToast = Toast.makeText(getApplicationContext(), "Second Session Began", Toast.LENGTH_LONG);
+                        sndPhaseToast.show();
+
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                if (dialogOpenned == false) {
+                    Vibrator vibrator;
+                    vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    vibrator.vibrate(1000);
+                    alertDialog.show();
+                    dialogOpenned = true;
+                }
+
             }
         });
-        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+
+    }
+
+
+    public void extendedBreakRoutine() {
+
+        runOnUiThread(new Runnable() {
             @Override
-            public void onCancel(DialogInterface dialog) {
-                timerHandler.removeCallbacks(timerRunnable);
+            public void run() {
 
-                //timerTextView.setText("18:00");
-                //startTime = System.currentTimeMillis();
-                startTime = System.currentTimeMillis() - sessionDuration*60*1000;
-                timerHandler.postDelayed(timerRunnable, 0);
+                AlertDialog.Builder builder;
+                builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Work or Break?");
+                builder.setMessage("You have not rested enough. Do you wish to extend your break?");
+                builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                        dialogOpenned = false;
+                        PAUSEMINUTES += PAUSEMINUTES / 2;
+                    }
+                });
+                builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        breakStatus = false;
+                        PAUSEMINUTES = ORIGINALPAUSEMINUTES;
+                        dialog.cancel();
+                        dialogOpenned = false;
+                        timerHandler.removeCallbacks(timerRunnable);
+                        startTime = System.currentTimeMillis() - sessionDuration * 60 * 1000;
+                        timerHandler.postDelayed(timerRunnable, 0);
+                    }
+                });
 
-                firstPhase = false;
-                Toast sndPhaseToast = Toast.makeText(getApplicationContext(), "Second Session Began" ,Toast.LENGTH_LONG);
-                sndPhaseToast.show();
-
+                AlertDialog alertDialog = builder.create();
+                if (dialogOpenned == false) {
+                    Vibrator vibrator;
+                    vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    vibrator.vibrate(1000);
+                    alertDialog.show();
+                    dialogOpenned = true;
+                }
             }
         });
-        AlertDialog alertDialog = builder.create();
-        if (dialogOpenned == false) {
-            Vibrator vibrator;
-            vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            vibrator.vibrate(1000);
-            alertDialog.show();
-            dialogOpenned = true;
-            }
 
-        }
-    });
+    }
 
-}
 
     public void workRoutine() {
 
@@ -375,7 +450,7 @@ public class MainActivity extends Activity {
                 AlertDialog.Builder builder;
                 builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Break Time");
-                builder.setMessage("Click ok to start a 5 minute break");
+                builder.setMessage("Click ok to start a" + breaks + " minute break");
                 builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
@@ -398,7 +473,6 @@ public class MainActivity extends Activity {
 
                 AlertDialog alertDialog = builder.create();
 
-
                 if (dialogOpenned == false) {
                     alertDialog.show();
                     Vibrator vibrator;
@@ -406,13 +480,10 @@ public class MainActivity extends Activity {
                     vibrator.vibrate(1000);
                     dialogOpenned = true;
                 }
-
             }
         });
-
-
-
     }
+
 
 
     @Override
@@ -420,16 +491,49 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        headsetButton = (Button)this.findViewById(R.id.headsetButton);
+        setAlgosButton = (Button)this.findViewById(R.id.setAlgosButton);
+        startButton = (Button)this.findViewById(R.id.startButton);
+        stopButton = (Button)this.findViewById(R.id.stopButton);
+        resultsButton = (Button)this.findViewById(R.id.resultsButton);
+        bpText = (Button)this.findViewById(R.id.bpTitle);
+        attValue = (TextView)this.findViewById(R.id.attText);
+        medValue = (TextView)this.findViewById(R.id.medText);
+        attCheckBox = (CheckBox)this.findViewById(R.id.attCheckBox);
+        medCheckBox = (CheckBox)this.findViewById(R.id.medCheckBox);
+        bpCheckBox = (CheckBox)this.findViewById(R.id.bpCheckBox);
+        stateText = (TextView)this.findViewById(R.id.stateText);
+        sqText = (TextView)this.findViewById(R.id.sqText);
+
         nskAlgoSdk = new NskAlgoSdk();
+
+        Intent test;
+        test = getIntent();
+
+        User user = (User) test.getSerializableExtra("user");
+        currentSession = new Session(0,0,0);
+
+        //String userID = user.getUsername();
+
+        String breaks = test.getExtras().getString("breakTime");
+        String works = test.getExtras().getString("workTime");
+
+        String[] splitedBreaks = breaks.split(" ");
+        String[] splitedWorks = works.split(" ");
+
+        PAUSEMINUTES = Integer.parseInt(splitedBreaks[0]);
+        ORIGINALPAUSEMINUTES = PAUSEMINUTES;
+        WORKMINUTES = Integer.parseInt(splitedWorks[0]);
+        PAUSESECONDS = PAUSEMINUTES * 60;
+
+        aux = minutes + ATTCHECKPOINT/60;
 
         try {
             // (1) Make sure that the device supports Bluetooth and Bluetooth is on
             mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
-                Toast.makeText(
-                        this,
-                        "Please enable your Bluetooth and re-run this program !",
-                        Toast.LENGTH_LONG).show();
+                headsetButton.setEnabled(false);
+                Toast.makeText( this, "Please enable your Bluetooth and re-run this program !", Toast.LENGTH_LONG).show();
                 //finish();
             }
         } catch (Exception e) {
@@ -438,31 +542,7 @@ public class MainActivity extends Activity {
             return;
         }
 
-        headsetButton = (Button)this.findViewById(R.id.headsetButton);
-        //cannedButton = (Button)this.findViewById(R.id.cannedDatabutton);
-        setAlgosButton = (Button)this.findViewById(R.id.setAlgosButton);
-        //setIntervalButton = (Button)this.findViewById(R.id.setIntervalButton);
-        startButton = (Button)this.findViewById(R.id.startButton);
-        stopButton = (Button)this.findViewById(R.id.stopButton);
-        resultsButton = (Button)this.findViewById(R.id.resultsButton);
 
-        /*intervalSeekBar = (SeekBar)this.findViewById(R.id.intervalSeekBar);
-        intervalText = (TextView)this.findViewById(R.id.intervalText);*/
-
-        bpText = (Button)this.findViewById(R.id.bpTitle);
-
-        attValue = (TextView)this.findViewById(R.id.attText);
-        medValue = (TextView)this.findViewById(R.id.medText);
-
-        attCheckBox = (CheckBox)this.findViewById(R.id.attCheckBox);
-        medCheckBox = (CheckBox)this.findViewById(R.id.medCheckBox);
-        //blinkCheckBox = (CheckBox)this.findViewById(R.id.blinkCheckBox);
-        bpCheckBox = (CheckBox)this.findViewById(R.id.bpCheckBox);
-
-        //blinkImage = (ImageView)this.findViewById(R.id.blinkImage);
-
-        stateText = (TextView)this.findViewById(R.id.stateText);
-        sqText = (TextView)this.findViewById(R.id.sqText);
 
         resultsButton.setOnClickListener(new View.OnClickListener() {
                                              @Override
@@ -471,43 +551,37 @@ public class MainActivity extends Activity {
                                                  int maxWorkDuration = maxWorkTime();
                                                  int numOfBreaks = breakInstants.size()-1;
 
-                                                 Log.d(TAG, "Total session duration was: " + sessionDuration);
-
                                                  Intent resultsIntent = new Intent(MainActivity.this, ResultsActivity.class);
+
+                                                 Intent b;
+                                                 b = getIntent();
+                                                 User user = (User) b.getSerializableExtra("user");
+
+                                                 ArrayList<Session> sessions = user.getSessions();
+                                                 Integer currentSessionID = sessions.size()+1;
+
+
+                                                 if(breakInstants.size() == 1)
+                                                     breakInstants.add(0); //gostava de saber porque
+
                                                  resultsIntent.putExtra("session duration", sessionDuration);
 
-                                                 Bundle b;
-                                                 b = getIntent().getExtras();
-                                                 String subject = b.getString("subject");
-
-                                                 resultsIntent.putExtra("subject", subject);
-
-                                                 if(breakInstants.size() == 1) {
-                                                     resultsIntent.putExtra("num of breaks", numOfBreaks);
-                                                     breakInstants.add(0);
-                                                     resultsIntent.putExtra("break instants", breakInstants);
-                                                 } else {
-                                                     for (int i= 0; i < breakInstants.size()-1; i++) {
-                                                         Log.d(TAG, "Breaks Sent: " + breakInstants.get(i));
-                                                     }
-                                                     Log.d(TAG, "BreakInstants2: " + breakInstants.toString());
-                                                     resultsIntent.putExtra("break instants", breakInstants);
-                                                     resultsIntent.putExtra("num of breaks", numOfBreaks);
-                                                 }
-
-                                                 resultsIntent.putExtra("max duration time", maxWorkDuration);
+                                                 resultsIntent.putExtra("break instants", breakInstants);
 
                                                  resultsIntent.putExtra("lower Bond", lowerBond);
 
                                                  resultsIntent.putExtra("upper Bond", upperBond);
 
-                                                 resultsIntent.putExtra("raw values", bpGraphValues);
+                                                 //resultsIntent.putExtra("raw values", bpGraphValues);
 
+                                                 //Session currentSession = new Session(currentSessionID, maxWorkDuration, numOfBreaks);
 
+                                                 currentSession.setSessionID(currentSessionID);
+                                                 currentSession.setNumOfBreaks(maxWorkDuration);
+                                                 currentSession.setMaxWorkDuration(numOfBreaks);
 
-                                                 //TextView txt = (TextView) findViewById(R.id.id);
-                                                 //String userID = editText.getText().toString();
-                                                 //Log.d(TAG, "The inserted text was: " + editText.getText().toString());
+                                                 resultsIntent.putExtra("user", user);
+                                                 resultsIntent.putExtra("session", currentSession);
 
                                                  startActivity(resultsIntent);
                                              }
@@ -1042,7 +1116,7 @@ public class MainActivity extends Activity {
                     //Forca do sinal
                     //Log.d(TAG, "Signal Quality: " + sqText.getText() + "Value:" + value);
                     boolean goodSinQual = sqText.getText().equals("GOOD");
-                    boolean bufspaceLeft = attCircularBuf.size() <= PAUSESECONDS;
+                    boolean bufspaceLeft = attCircularBuf.size() <= ATTCHECKPOINT;
 
                     if( goodSinQual && bufspaceLeft)
                         attCircularBuf.addFirst(value);
@@ -1082,6 +1156,27 @@ public class MainActivity extends Activity {
                 bpGraphValues.add(medValueStr);
                 bpGraphValues.add("end");
                 final String finalMedStr = medStr;
+
+                if (firstPhase == false && breakStatus == true) {
+                    //Forca do sinal
+                    //Log.d(TAG, "Signal Quality: " + sqText.getText() + "Value:" + value);
+                    boolean goodSinQual = sqText.getText().equals("GOOD");
+                    boolean bufspaceLeft = medCircularBuf.size() <= ATTCHECKPOINT;
+
+                    if( goodSinQual && bufspaceLeft)
+                        medCircularBuf.addFirst(value);
+                    else if (!goodSinQual && !bufspaceLeft) {
+                        medCircularBuf.removeLast();
+                        medCircularBuf.addFirst(999);
+                    } else if (!goodSinQual && bufspaceLeft)
+                        medCircularBuf.addFirst(999);
+                    else if (goodSinQual && !bufspaceLeft) {
+                        medCircularBuf.removeLast();
+                        medCircularBuf.addFirst(value);
+                    }
+                   // Log.d(TAG, "" + medCircularBuf);
+                }
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -1290,7 +1385,7 @@ public class MainActivity extends Activity {
         @Override
         public void onStatesChanged(int connectionStates) {
             // TODO Auto-generated method stub
-            //Log.d(TAG, "connectionStates change to: " + connectionStates);
+
             switch (connectionStates) {
                 case ConnectionStates.STATE_CONNECTING:
                     // Do something when connecting

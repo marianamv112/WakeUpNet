@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/color-v11/abc_background_cache_hint_selector_material_light.xml",
+        "source": "/Users/mariana/.android/build-cache/6c1aebe755431d188a1dbf7345d5b1a9487b1cae/output/res/color-v11/abc_background_cache_hint_selector_material_light.xml"
+    },
+    {
+        "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/color-v11/abc_background_cache_hint_selector_material_dark.xml",
+        "source": "/Users/mariana/.android/build-cache/6c1aebe755431d188a1dbf7345d5b1a9487b1cae/output/res/color-v11/abc_background_cache_hint_selector_material_dark.xml"
+    }
+]

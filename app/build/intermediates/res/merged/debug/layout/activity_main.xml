@@ -71,9 +71,9 @@
         android:layout_toRightOf="@+id/headsetButton"
         android:layout_toEndOf="@+id/sqText"
         android:layout_marginLeft="10dp"
-        android:textSize="12dp"/>
+        android:textSize="12dp"
+        android:enabled="false"/>
 
-        <!-- android:enabled="false"-->
 
     <Button
         android:layout_width="wrap_content"
@@ -183,7 +183,7 @@
          android:layout_alignParentEnd="true"
          android:id="@+id/include"
          android:layout_below="@+id/bpTitle"
-         android:layout_marginTop="5dp" />
+         android:layout_marginTop="5dp" > </include>
 
     <TextView
         android:id="@+id/timerTextView"
@@ -302,7 +302,7 @@
         android:layout_alignRight="@+id/include"
         android:layout_alignEnd="@+id/include" />-->
 
-    <EditText
+     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textMultiLine"

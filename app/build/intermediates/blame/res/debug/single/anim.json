@@ -1,34 +1,42 @@
 [
     {
         "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/anim/abc_fade_out.xml",
-        "source": "/Users/mariana/.android/build-cache/113c90dc0bd4ceee02b72067cfac5315962e91db/output/res/anim/abc_fade_out.xml"
+        "source": "/Users/mariana/.android/build-cache/6c1aebe755431d188a1dbf7345d5b1a9487b1cae/output/res/anim/abc_fade_out.xml"
     },
     {
         "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/anim/abc_slide_out_top.xml",
-        "source": "/Users/mariana/.android/build-cache/113c90dc0bd4ceee02b72067cfac5315962e91db/output/res/anim/abc_slide_out_top.xml"
+        "source": "/Users/mariana/.android/build-cache/6c1aebe755431d188a1dbf7345d5b1a9487b1cae/output/res/anim/abc_slide_out_top.xml"
     },
     {
         "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/anim/abc_slide_in_bottom.xml",
-        "source": "/Users/mariana/.android/build-cache/113c90dc0bd4ceee02b72067cfac5315962e91db/output/res/anim/abc_slide_in_bottom.xml"
+        "source": "/Users/mariana/.android/build-cache/6c1aebe755431d188a1dbf7345d5b1a9487b1cae/output/res/anim/abc_slide_in_bottom.xml"
     },
     {
         "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/anim/abc_grow_fade_in_from_bottom.xml",
-        "source": "/Users/mariana/.android/build-cache/113c90dc0bd4ceee02b72067cfac5315962e91db/output/res/anim/abc_grow_fade_in_from_bottom.xml"
+        "source": "/Users/mariana/.android/build-cache/6c1aebe755431d188a1dbf7345d5b1a9487b1cae/output/res/anim/abc_grow_fade_in_from_bottom.xml"
     },
     {
         "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/anim/abc_slide_in_top.xml",
-        "source": "/Users/mariana/.android/build-cache/113c90dc0bd4ceee02b72067cfac5315962e91db/output/res/anim/abc_slide_in_top.xml"
+        "source": "/Users/mariana/.android/build-cache/6c1aebe755431d188a1dbf7345d5b1a9487b1cae/output/res/anim/abc_slide_in_top.xml"
+    },
+    {
+        "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/anim/abc_popup_enter.xml",
+        "source": "/Users/mariana/.android/build-cache/6c1aebe755431d188a1dbf7345d5b1a9487b1cae/output/res/anim/abc_popup_enter.xml"
     },
     {
         "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/anim/abc_shrink_fade_out_from_bottom.xml",
-        "source": "/Users/mariana/.android/build-cache/113c90dc0bd4ceee02b72067cfac5315962e91db/output/res/anim/abc_shrink_fade_out_from_bottom.xml"
+        "source": "/Users/mariana/.android/build-cache/6c1aebe755431d188a1dbf7345d5b1a9487b1cae/output/res/anim/abc_shrink_fade_out_from_bottom.xml"
+    },
+    {
+        "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/anim/abc_popup_exit.xml",
+        "source": "/Users/mariana/.android/build-cache/6c1aebe755431d188a1dbf7345d5b1a9487b1cae/output/res/anim/abc_popup_exit.xml"
     },
     {
         "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/anim/abc_fade_in.xml",
-        "source": "/Users/mariana/.android/build-cache/113c90dc0bd4ceee02b72067cfac5315962e91db/output/res/anim/abc_fade_in.xml"
+        "source": "/Users/mariana/.android/build-cache/6c1aebe755431d188a1dbf7345d5b1a9487b1cae/output/res/anim/abc_fade_in.xml"
     },
     {
         "merged": "/Users/mariana/Downloads/Android Developer Tools 4.2 /EEG_Algo_SDK_Android/Algo_SDK_Sample/app/build/intermediates/res/merged/debug/anim/abc_slide_out_bottom.xml",
-        "source": "/Users/mariana/.android/build-cache/113c90dc0bd4ceee02b72067cfac5315962e91db/output/res/anim/abc_slide_out_bottom.xml"
+        "source": "/Users/mariana/.android/build-cache/6c1aebe755431d188a1dbf7345d5b1a9487b1cae/output/res/anim/abc_slide_out_bottom.xml"
     }
 ]

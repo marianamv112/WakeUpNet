@@ -1,28 +1,54 @@
 package com.neurosky.algo_sdk_sample;
 
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.List;
+
 
 public class ResultsActivity extends ActionBarActivity {
+
+    final String TAG = "MainActivityTag";
+
 
     File outputFile;
     String gnuPlotInput = "";
     int gnuPlotXXAxis = 0;
+
+    private static final String URL = "194.210.234.246:3000"; //ver este url...
+    ProgressDialog progress;
+    Integer sessDur;
+    Integer maxSess;
+    Integer numBreaks;
+    Integer sessId;
+    User user;
+    private DataBaseHandler db;
+
+    private SendData sendDataTask = null;
+
+    //List to store all the results
+    private List<Results> results;
+    private Results result;
+
+    //1 means data is synced and 0 means data is not synced
+    public static final int SYNCED_WITH_SERVER = 1;
+    public static final int NOT_SYNCED_WITH_SERVER = 0;
+
+    //a broadcast to know weather the data is synced or not
+    public static final String DATA_SAVED_BROADCAST = "net.simplifiedcoding.datasaved";
+
+    //Broadcast receiver to know the sync status
+    private BroadcastReceiver broadcastReceiver;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,19 +62,29 @@ public class ResultsActivity extends ActionBarActivity {
         TextView lowerBondAtt = (TextView) findViewById(R.id.lowerBond);
         TextView upperBondAtt = (TextView) findViewById(R.id.upperBond);
         Button sendButton = (Button) findViewById(R.id.sendButton);
+        Button sendButton2 = (Button) findViewById(R.id.sendButton2);
+        Button suggButton = (Button) findViewById(R.id.suggButton);
 
-        Bundle b;
-        b = getIntent().getExtras();
-        Integer sessDur = b.getInt("session duration");
-        Integer maxSess = b.getInt("max duration time");
-        Integer numBreaks = b.getInt("num of breaks");
-        Integer lowerBond = b.getInt("lower Bond");
-        Integer upperBond = b.getInt("upper Bond");
 
-        ArrayList<Integer> breakInsts = b.getIntegerArrayList("break instants");
-        ArrayList<String> rawValues = b.getStringArrayList("raw values");
+        Intent b;
+        b = getIntent();
+        user = (User)b.getSerializableExtra("user");
+        final Session session = (Session)b.getSerializableExtra("session");
 
-        Log.d("", rawValues.toString());
+        sessDur = b.getExtras().getInt("session duration");
+        maxSess = session.getMaxWorkDuration();
+        numBreaks = session.getNumOfBreaks();
+        sessId = session.getSessionID();
+        Integer lowerBond = b.getExtras().getInt("lower Bond");
+        Integer upperBond = b.getExtras().getInt("upper Bond");
+
+        result.setResUser(user);
+        result.setResSessionID(sessId);
+        result.setResMaxWorkDuration(numBreaks);
+        result.setResMaxWorkDuration(maxSess);
+
+        ArrayList<Integer> breakInsts = b.getExtras().getIntegerArrayList("break instants");
+        /*ArrayList<String> rawValues = b.getExtras().getStringArrayList("raw values");
 
         for (String s : rawValues) {
             if (s.equals("begin"))
@@ -59,53 +95,30 @@ public class ResultsActivity extends ActionBarActivity {
             }
             else
                 gnuPlotInput += s + "\t";
-            //Log.d("", gnuPlotInput);
         }
-        /*for(int i = 0; i < rawValues.size(); i++) {
-            if (rawValues.get(i).equals("begin"))
-                gnuPlotInput += Integer.toString(gnuPlotXXAxis) + "\t";
-            else if (s=="end") {
-                gnuPlotInput += "\n";
-                gnuPlotXXAxis++;
-            }
-            else
-                gnuPlotInput += s + "\t";
-            Log.d("", gnuPlotInput);
-        }*/
+
 
         try {
             String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
-
             OutputStream out = null;
-
             outputFile = new File(path, "gnuPlotInput.dat");
-
-            //if (outputFile.exists())
-            //    Log.d(TAG, "File created");
-
-
             out = new FileOutputStream(outputFile);
-
             PrintWriter pw = new PrintWriter(out);
             pw.println(gnuPlotInput);
             pw.flush();
             pw.close();
-
-            //sendEmail(outputFile);
-
         } catch (FileNotFoundException e) {
             Log.d("", "File not found Exception");
         } catch (IOException i) {
             Log.d("", "IO EXCEPTION");
-        }
+        }*/
 
         String arr = "";
 
-        //Log.d("...", "BreakInstants3: " + breakInsts.toString());
+
 
         for (int i=0; i < breakInsts.size() - 1 ; i++) {
             arr += breakInsts.get(i).toString() + "\t";
-            //Log.d("...", "Array of Breaks: " + breakInsts.get(i).toString());
         }
 
         sessionDurText.setText(sessDur.toString());
@@ -120,13 +133,33 @@ public class ResultsActivity extends ActionBarActivity {
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendEmail(outputFile);
-                //sendEmail();
+                //saveToServer();
+                 sendDataToDB(session.getSessionID(), maxSess, numBreaks );
             }
         });
-        }
 
-        //protected void sendEmail(File filelocation) {
+        sendButton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendEmail(outputFile);
+            }
+        });
+
+        suggButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("https://play.google.com/store/search?q=neurofeedback&c=apps"));
+                startActivity(intent);
+            }
+        });
+    }
+
+    protected void sendDataToDB(Integer a, Integer b, Integer c) {
+        sendDataTask = new SendData(a, b, c);
+        sendDataTask.execute((Void) null);
+    }
+
 
     protected void sendEmail(File filelocation) {
 
@@ -136,7 +169,7 @@ public class ResultsActivity extends ActionBarActivity {
         TextView breaksInstText = (TextView) findViewById(R.id.breaksInstText);
         TextView lowerBondAtt = (TextView) findViewById(R.id.lowerBond);
         TextView upperBondAtt = (TextView) findViewById(R.id.upperBond);
-        //Button sendButton = (Button) findViewById(R.id.sendButton);
+
 
         Uri path = Uri.fromFile(filelocation);
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
@@ -147,7 +180,7 @@ public class ResultsActivity extends ActionBarActivity {
         // the attachment
         emailIntent .putExtra(Intent.EXTRA_STREAM, path);
         // the mail subject
-        String subject = getIntent().getStringExtra("subject");
+        String subject = user.getUsername();
         //Log.d("Results", "" + subject );
 
         // the email content
@@ -157,6 +190,60 @@ public class ResultsActivity extends ActionBarActivity {
         emailIntent .putExtra(Intent.EXTRA_SUBJECT, subject);
         startActivity(Intent.createChooser(emailIntent , "Send email..."));
     }
- }
+
+
+    /*
+    * this method is saving the name to ther server
+    * */
+   /* private void saveToServer() {
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Saving...");
+        progressDialog.show();
+
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        progressDialog.dismiss();
+                        try {
+                            JSONObject obj = new JSONObject(response);
+                            if (!obj.getBoolean("error")) {
+                                //if there is a success
+                                //storing the name to sqlite with status synced
+                                db.updateResults(result, SYNCED_WITH_SERVER);
+                            } else {
+                                //if there is some error
+                                //saving the name to sqlite with status unsynced
+                                db.updateResults(result, NOT_SYNCED_WITH_SERVER);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        progressDialog.dismiss();
+                        //on error storing the name to sqlite with status unsynced
+                        db.updateResults(result, NOT_SYNCED_WITH_SERVER);
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                sendDataToDB(sessId, maxSess, numBreaks );
+                return params;
+            }
+        };
+
+        VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
+    }*/
+
+
+
+    }
+
 
 

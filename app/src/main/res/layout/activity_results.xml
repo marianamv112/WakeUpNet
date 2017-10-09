@@ -96,7 +96,6 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/numBreaks"
         android:layout_alignBaseline="@+id/numBreaks"
-
         />
 
     </RelativeLayout>
@@ -185,15 +184,33 @@
         android:layout_alignParentTop="true"
         android:orientation="horizontal">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Send Results"
-            android:id="@+id/sendButton"
-            android:textSize="12dp"
-
-            android:layout_alignParentLeft="true" />
-
     </RelativeLayout>
+
+    <Button
+        android:id="@+id/sendButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:text="Send Results"
+
+        android:textSize="12dp" />
+
+    <Button
+        android:id="@+id/sendButton2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:text="Send Results 2"
+
+        android:textSize="12dp" />
+
+    <Button
+        android:id="@+id/suggButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:text="Need a focus boost?"
+        android:textSize="12dp" />
+
 
 </LinearLayout>

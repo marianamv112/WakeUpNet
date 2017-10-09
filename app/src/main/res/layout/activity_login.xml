@@ -25,39 +25,80 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/email_login_form"
-            android:layout_width="match_parent"
+            android:id="@+id/email_login_form3"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:weightSum="1">
 
-            <EditText
-                android:id="@+id/id"
+        <LinearLayout
+            android:id="@+id/email_login_form"
+            android:layout_width="353dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:weightSum="1">
+
+            <TextView
+                android:id="@+id/newUserText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Insert your ID"
-                 />
-
-            <!-- <EditText
-                android:id="@+id/password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/prompt_password"
-                android:imeActionId="@+id/login"
-                android:imeActionLabel="@string/action_sign_in_short"
-                android:imeOptions="actionUnspecified"
-                android:inputType="textPassword"
-                android:maxLines="1"
-                 /> -->
+                android:text="New User:"
+                />
 
             <Button
-                android:id="@+id/sign_in_button"
+                android:id="@+id/newUserButton"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Register"
+                android:text="Sign Up"
                 android:textStyle="bold" />
 
+        </LinearLayout>
+
+            <Space
+                android:layout_width="1dp"
+                android:layout_height="80dp"/>
+
+        <LinearLayout
+            android:id="@+id/email_login_form2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:weightSum="1">
+
+        <TextView
+            android:id="@+id/regUserText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Registered User:" />
+
+        <EditText
+            android:id="@+id/regUserId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Insert your ID" />
+
+        <EditText
+            android:id="@+id/regUserPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_password"
+            android:imeActionId="@+id/login"
+            android:imeActionLabel="@string/action_sign_in_short"
+            android:imeOptions="actionUnspecified"
+            android:inputType="textPassword"
+            android:maxLines="1" />
+
+        <Button
+            android:id="@+id/sign_in_button"
+            style="?android:textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Sign In"
+            android:textStyle="bold" />
+        </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
